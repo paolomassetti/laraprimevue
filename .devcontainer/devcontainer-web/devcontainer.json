@@ -1,0 +1,46 @@
+{
+    "name": "Web",
+    "dockerComposeFile": "../../docker-compose.yaml",
+    "service": "web",
+    "runServices": [
+        "server",
+        "web", 
+        "informix"
+    ],
+    "workspaceFolder": "/var/www/html",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-azuretools.vscode-docker",
+                "mikestead.dotenv",
+                "editorconfig.editorconfig",
+                "onecentlin.laravel-extension-pack",
+                "ionutvmi.path-autocomplete",
+                "bmewburn.vscode-intelephense-client",
+                "MehediDracula.php-namespace-resolver",
+                "Natizyskunk.sftp",
+                "ms-azuretools.vscode-docker",
+                "vue.volar",
+                "bradlc.vscode-tailwindcss"
+            ],
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "php.validate.executablePath": "/usr/local/bin/php",
+                "editor.formatOnSave": false,
+                "files.autoSave": "off"
+            }
+        }
+    },
+    "remoteUser": "root",
+    "remoteEnv": {
+        "INFORMIXDIR": "/opt/ibm/informix",
+        "INFORMIXSERVER": "informix",
+        "INFORMIXSQLHOSTS": "/opt/ibm/informix/etc/sqlhosts",
+        "LD_LIBRARY_PATH": "/opt/ibm/informix/lib:/opt/ibm/informix/lib/cli:/opt/ibm/informix/lib/esql"
+    },
+    "shutdownAction": "none",
+    "mounts": [
+        "source=${localWorkspaceFolder}/app,target=/var/www/html,type=bind,consistency=cached"
+    ],
+    "onCreateCommand": "chown -fR 1000:1000 /var/www/html/storage /var/www/html/bootstrap/cache && chmod -fR g+w /var/www/html/storage /var/www/html/bootstrap/cache && composer install"
+}

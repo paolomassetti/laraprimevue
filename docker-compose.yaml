@@ -1,0 +1,49 @@
+services:
+  server:
+    image: httpd:2.4
+    ports:
+      - '8080:80'
+    volumes:
+      - ./.data/apache/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
+      - ./app:/var/www/html
+    depends_on:
+      - web
+      - informix
+
+  web:
+    build:
+      context: .
+      dockerfile: .build/dockerfiles/web.dockerfile
+    volumes:
+      - ./app:/var/www/html
+    user: "1000:1000"
+    tty: true
+
+  informix:
+    image: 'ibmcom/informix-developer-database:latest'
+    environment:
+      - LICENSE=accept
+      - INFORMIXDIR=/opt/ibm/informix
+      - INFORMIXSQLHOSTS=/opt/ibm/informix/etc/sqlhosts
+      - INFORMIXSERVER=informix
+      - INFORMIX_PASSWORD=in4mix
+    ports:
+      - "9088:9088"
+    volumes:
+      - informix_data:/opt/ibm/data
+
+  asset:
+    build:
+      context: .
+      dockerfile: .build/dockerfiles/asset.dockerfile
+    volumes:
+      - ./app/resources:/var/www/html/resources
+      - ./app/public:/var/www/html/public
+      - ./app/vite.config.js:/var/www/html/vite.config.js
+      - ./app/package.json:/var/www/html/package.json
+    ports:
+      - "5173:5173"
+    tty: true
+
+volumes:
+  informix_data:

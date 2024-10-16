@@ -1,0 +1,37 @@
+{
+    "name": "Asset",
+    "dockerComposeFile": "../../docker-compose.yaml",
+    "service": "asset",
+    "workspaceFolder": "/var/www/html",
+    "runServices": [
+        "asset"
+    ],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "mikestead.dotenv",
+                "editorconfig.editorconfig",
+                "esbenp.prettier-vscode",
+                "dbaeumer.vscode-eslint",
+                "vue.volar",
+                "bradlc.vscode-tailwindcss"
+            ],
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "editor.formatOnSave": false,
+                "files.autoSave": "off"
+            }
+        }
+    },
+    "shutdownAction": "none",
+    "mounts": [
+        "source=${localWorkspaceFolder}/app/resources,target=/var/www/html/resources,type=bind,consistency=cached",
+        "source=${localWorkspaceFolder}/app/public,target=/var/www/html/public,type=bind,consistency=cached",
+        "source=${localWorkspaceFolder}/app/vite.config.js,target=/var/www/html/vite.config.js,type=bind,consistency=cached",
+        "source=${localWorkspaceFolder}/app/package.json,target=/var/www/html/package.json,type=bind,consistency=cached",
+        "source=${localWorkspaceFolder}/app/postcss.config.js,target=/var/www/html/postcss.config.js,type=bind,consistency=cached",
+        "source=${localWorkspaceFolder}/app/tailwind.config.js,target=/var/www/html/tailwind.config.js,type=bind,consistency=cached",
+        "source=${localWorkspaceFolder}/app/vendor/tightenco/ziggy/dist/vue.m.js,target=/var/www/html/vendor/tightenco/ziggy/dist/vue.m.js,type=bind,consistency=cached"
+    ],
+    "postCreateCommand": "npm install && npm run dev"
+}
