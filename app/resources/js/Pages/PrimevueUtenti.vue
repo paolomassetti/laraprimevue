@@ -1,58 +1,38 @@
 <script setup>
 import AppLayout from "@/primevue/layout/AppLayout.vue";
-import Dashboard  from "@/primevue/views/Dashboard.vue";
 import { Head } from '@inertiajs/vue3';
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import Button from 'primevue/button';
 
-import CustomerService from '@/primevue/service/CustomerService';
-import Column  from 'primevue/column';
-import DataTable  from 'primevue/datatable';
-import ProgressBar from 'primevue/progressbar';
-import  Rating  from 'primevue/rating';
-import { ref, onBeforeMount } from 'vue';
+const users = ref([]);
+const sortField = ref('name');
+const sortOrder = ref(1);
 
-const customer1 = ref(null);
-const customer2 = ref(null);
-const customer3 = ref(null);
-const loading1 = ref(null);
-const loading2 = ref(null);
-const statuses = ref(['unqualified', 'qualified', 'new', 'negotiation', 'renewal', 'proposal']);
+const loadUsers = async () => {
+    console.log('test')
+    const response = await axios.get('/api/users');
+    users.value = response.data;
+}
 
-const customerService = new CustomerService();
-
-onBeforeMount(() => {
-    customerService.getCustomersLarge().then((data) => {
-        customer1.value = data;
-        loading1.value = false;
-        customer1.value.forEach((customer) => (customer.date = new Date(customer.date)));
-    });
-    customerService.getCustomersLarge().then((data) => (customer2.value = data));
-    customerService.getCustomersMedium().then((data) => (customer3.value = data));
-    loading2.value = false;
-});
-
-const formatCurrency = (value) => {
-    return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-};
+onMounted(loadUsers);
 
 const formatDate = (value) => {
-    return value.toLocaleDateString('en-US', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    });
+    const date = new Date(value);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
 };
-const calculateCustomerTotal = (name) => {
-    let total = 0;
-    if (customer3.value) {
-        for (let customer of customer3.value) {
-            if (customer.representative.name === name) {
-                total++;
-            }
-        }
-    }
 
-    return total;
+const refreshData = () => {
+    sortField.value = 'name';
+    sortOrder.value = 1;
+    loadUsers();
 };
+
 
 const props = defineProps({
   pageTitle: String,
@@ -69,55 +49,36 @@ const props = defineProps({
         <div class="col-12">
             <div class="card">
                 <DataTable
-                    :value="customer1"
+                    :value="users"
                     :paginator="true"
                     stripedRows
                     :rows="10"
                     dataKey="id"
                     :rowHover="true"
-                    :loading="loading1"
                     responsiveLayout="scroll"
+                    :rowsPerPageOptions="[5, 10, 20, 50]"
+                    :sortField="sortField"
+                    :sortOrder="sortOrder"
                 >
                     <template #empty> No customers found. </template>
                     <template #loading> Loading customers data. Please wait. </template>
-                    <Column field="name" header="Name" style="min-width: 12rem">
+                    <template #paginatorstart>
+                        <Button type="button" icon="pi pi-refresh" @click="refreshData" text />
+                    </template>
+                    <template #paginatorend></template>
+                    <Column field="name" header="Name" sortable>
                         <template #body="{ data }">
                             {{ data.name }}
                         </template>
                     </Column>
-                    <Column header="Country" filterField="country.name" style="min-width: 12rem">
+                    <Column header="Email" field="email" sortable>
                         <template #body="{ data }">
-                            <span style="margin-left: 0.5em; vertical-align: middle" class="image-text">{{ data.country.name }}</span>
+                            {{ data.email }}
                         </template>
                     </Column>
-                    <Column header="Agent" filterField="representative" :showFilterMatchModes="false" :filterMenuStyle="{ width: '14rem' }" style="min-width: 14rem">
+                    <Column header="Data creazione" field="created_at" dataType="date">
                         <template #body="{ data }">
-                            <span style="margin-left: 0.5em; vertical-align: middle" class="image-text">{{ data.representative.name }}</span>
-                        </template>
-                    </Column>
-                    <Column header="Date" filterField="date" dataType="date" style="min-width: 10rem">
-                        <template #body="{ data }">
-                            {{ formatDate(data.date) }}
-                        </template>
-                    </Column>
-                    <Column header="Balance" filterField="balance" dataType="numeric" style="min-width: 10rem">
-                        <template #body="{ data }">
-                            {{ formatCurrency(data.balance) }}
-                        </template>
-                    </Column>
-                    <Column field="status" header="Status" :filterMenuStyle="{ width: '14rem' }" style="min-width: 12rem">
-                        <template #body="{ data }">
-                            <span :class="'customer-badge status-' + data.status">{{ data.status }}</span>
-                        </template>
-                    </Column>
-                    <Column field="activity" header="Activity" :showFilterMatchModes="false" style="min-width: 12rem">
-                        <template #body="{ data }">
-                            <ProgressBar :value="data.activity" :showValue="false" style="height: 0.5rem"></ProgressBar>
-                        </template>
-                    </Column>
-                    <Column field="verified" header="Verified" dataType="boolean" bodyClass="text-center" style="min-width: 8rem">
-                        <template #body="{ data }">
-                            <i class="pi" :class="{ 'text-green-500 pi-check-circle': data.verified, 'text-pink-500 pi-times-circle': !data.verified }"></i>
+                            {{ formatDate(data.created_at) }}
                         </template>
                     </Column>
                 </DataTable>
