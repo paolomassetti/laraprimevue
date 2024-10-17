@@ -10,11 +10,13 @@ import Button from 'primevue/button';
 const users = ref([]);
 const sortField = ref('name');
 const sortOrder = ref(1);
+const refreshKey = ref(0);
+const loading = ref(true);
 
 const loadUsers = async () => {
-    console.log('test')
     const response = await axios.get('/api/users');
     users.value = response.data;
+    loading.value = false;
 }
 
 onMounted(loadUsers);
@@ -30,6 +32,7 @@ const formatDate = (value) => {
 const refreshData = () => {
     sortField.value = 'name';
     sortOrder.value = 1;
+    refreshKey.value++;
     loadUsers();
 };
 
@@ -49,6 +52,9 @@ const props = defineProps({
         <div class="col-12">
             <div class="card">
                 <DataTable
+                    :key="refreshKey"
+                    :sortField="sortField"
+                    :sortOrder="sortOrder"
                     :value="users"
                     :paginator="true"
                     stripedRows
@@ -57,26 +63,25 @@ const props = defineProps({
                     :rowHover="true"
                     responsiveLayout="scroll"
                     :rowsPerPageOptions="[5, 10, 20, 50]"
-                    :sortField="sortField"
-                    :sortOrder="sortOrder"
+                    :globalFilterFields="['name','email', 'created_at']"
                 >
-                    <template #empty> No customers found. </template>
+                    <template #empty> Nessun utente trovato. </template>
                     <template #loading> Loading customers data. Please wait. </template>
                     <template #paginatorstart>
                         <Button type="button" icon="pi pi-refresh" @click="refreshData" text />
                     </template>
                     <template #paginatorend></template>
-                    <Column field="name" header="Name" sortable>
+                    <Column field="name" header="Name" sortable :style="{ width: '33%' }">
                         <template #body="{ data }">
                             {{ data.name }}
                         </template>
                     </Column>
-                    <Column header="Email" field="email" sortable>
+                    <Column header="Email" field="email" sortable :style="{ width: '33%' }">
                         <template #body="{ data }">
                             {{ data.email }}
                         </template>
                     </Column>
-                    <Column header="Data creazione" field="created_at" dataType="date">
+                    <Column header="Data creazione" field="created_at" dataType="date" :style="{ width: '33%' }">
                         <template #body="{ data }">
                             {{ formatDate(data.created_at) }}
                         </template>
