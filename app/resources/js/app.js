@@ -8,6 +8,7 @@ import DialogService from 'primevue/dialogservice';
 import ConfirmationService from 'primevue/confirmationservice';
 import BadgeDirective from 'primevue/badgedirective';
 import Tooltip from 'primevue/tooltip';
+import InputText from 'primevue/inputtext';
 import Ripple from 'primevue/ripple';
 import StyleClass from 'primevue/styleclass';
 import ConfirmDialog from 'primevue/confirmdialog';
@@ -32,6 +33,7 @@ createInertiaApp({
             .use(DialogService)
             .use(ConfirmationService)
              .directive('tooltip', Tooltip)
+             .directive('InputText', InputText)
              .directive('badge', BadgeDirective)
              .directive('ripple', Ripple)
              .directive('styleclass', StyleClass)

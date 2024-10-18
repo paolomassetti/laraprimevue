@@ -5,7 +5,11 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import { Head } from '@inertiajs/vue3';
 import AppLayout from "@/primevue/layout/AppLayout.vue";
+import Button from 'primevue/button';
+import InputText from 'primevue/inputtext';
 
+
+//DataTables
 const users = ref([]);
 const totalRecords = ref(0);
 const currentPage = ref(1);
@@ -13,6 +17,10 @@ const rowsPerPage = ref(10);
 const sortField = ref('name');
 const sortOrder = ref(1);
 const loading = ref(false);
+const refreshKey = ref(0);
+
+//Filters
+const name = ref(null);
 
 const props = defineProps({
   pageTitle: String,
@@ -45,6 +53,14 @@ const onSort = event => {
     loadUsers();
 };
 
+const refreshData = () => {
+    sortField.value = 'name';
+    sortOrder.value = 1;
+    currentPage.value = 1;
+    refreshKey.value++;
+    loadUsers();
+};
+
 </script>
 
 <template>
@@ -55,7 +71,20 @@ const onSort = event => {
     <div class="grid">
         <div class="col-12">
             <div class="card">
+                <div class="col-4 p-0">
+                    <FloatLabel>
+                        <InputText id="name" v-model="name" />
+                        <label for="name">Username</label>
+                    </FloatLabel>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid">
+        <div class="col-12">
+            <div class="card">
                 <DataTable
+                    :key="refreshKey"
                     :value="users"
                     :paginator="true"
                     :rows="rowsPerPage"
@@ -70,7 +99,12 @@ const onSort = event => {
                     rowHover
                     responsiveLayout="scroll"
                     :rowsPerPageOptions="[5, 10, 20, 50]"
-                    >
+                >
+                    <template #empty> Nessun utente trovato. </template>
+                    <template #paginatorstart>
+                        <Button v-tooltip.bottom="'Ricarica tabella'" type="button" icon="pi pi-refresh" @click="refreshData" text />
+                    </template>
+                    <template #paginatorend></template>
                     <Column field="name" header="Name" sortable />
                     <Column field="email" header="Email" sortable />
                     <Column field="created_at" header="Created At" sortable />
