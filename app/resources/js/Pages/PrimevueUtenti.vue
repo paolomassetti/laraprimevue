@@ -63,7 +63,6 @@ const props = defineProps({
                     :rowHover="true"
                     responsiveLayout="scroll"
                     :rowsPerPageOptions="[5, 10, 20, 50]"
-                    :globalFilterFields="['name','email', 'created_at']"
                 >
                     <template #empty> Nessun utente trovato. </template>
                     <template #loading> Loading customers data. Please wait. </template>

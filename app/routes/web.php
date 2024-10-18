@@ -10,8 +10,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
     Route::get('/utenti', [UtenteController::class, 'index'])->name('utenti.index');
-    Route::get('/utenti/post', [UtentePostController::class, 'index'])->name('utenti.post');
-    Route::post('/utente/search', [UtentePostController::class, 'search'])->name('utente.search');
+    Route::get('/utenti-post', [UtentePostController::class, 'index'])->name('utenti.post');
+    Route::post('/utenti/search', [UtentePostController::class, 'search'])->name('utenti.search');
 
     Route::get('/table', function () {
         return Inertia::render('PrimevueTable');
