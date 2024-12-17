@@ -33,5 +33,6 @@
         "source=${localWorkspaceFolder}/app/tailwind.config.js,target=/var/www/html/tailwind.config.js,type=bind,consistency=cached",
         "source=${localWorkspaceFolder}/app/vendor/tightenco/ziggy/dist/vue.m.js,target=/var/www/html/vendor/tightenco/ziggy/dist/vue.m.js,type=bind,consistency=cached"
     ],
-    "postCreateCommand": "npm install && npm run dev"
+    "postCreateCommand": "npm install",
+    "postAttachCommand": "npm run dev"
 }

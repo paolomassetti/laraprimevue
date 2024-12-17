@@ -70,12 +70,24 @@ const refreshData = () => {
 <app-layout>
     <div class="grid">
         <div class="col-12">
-            <div class="card">
-                <div class="col-4 p-0">
-                    <FloatLabel>
-                        <InputText id="name" v-model="name" />
-                        <label for="name">Username</label>
-                    </FloatLabel>
+            <div class="card flex flex-1">
+                <div class="col-3 p-0 mr-5">
+                    <div class="flex flex-column gap-2">
+                        <label for="name">Nome</label>
+                        <InputText id="name" v-model="value" />
+                    </div>
+                </div>
+                <div class="col-3 p-0 mr-5">
+                    <div class="flex flex-column gap-2">
+                        <label for="email">Email</label>
+                        <InputText id="email" v-model="value" datatype="email" />
+                    </div>
+                </div>
+                <div class="col-3 p-0 mr-5">
+                    <div class="flex flex-column gap-2">
+                        <label for="email">Data creazione</label>
+                        <InputText id="created_at" v-model="value" datatype="date" />
+                    </div>
                 </div>
             </div>
         </div>
