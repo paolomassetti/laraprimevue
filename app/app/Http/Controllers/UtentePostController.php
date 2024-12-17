@@ -20,6 +20,14 @@ class UtentePostController extends Controller
     {
         $query = User::query();
 
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->input('name') . '%');
+        }
+
+        if ($request->filled('email')) {
+            $query->where('email', 'like', '%' . $request->input('email') . '%');
+        }
+
         $totalData = $query->count();
 
         if ($request->filled('sortField') && $request->filled('sortOrder')) {

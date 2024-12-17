@@ -21,6 +21,8 @@ const refreshKey = ref(0);
 
 //Filters
 const name = ref(null);
+const email = ref(null);
+const created_at = ref(null);
 
 const props = defineProps({
   pageTitle: String,
@@ -28,11 +30,14 @@ const props = defineProps({
 
 const loadUsers = async () => {
     loading.value = true;
+
     const response = await axios.post('/utenti/search', {
         start: (currentPage.value - 1) * rowsPerPage.value,
         length: rowsPerPage.value,
         sortField: sortField.value,
-        sortOrder: sortOrder.value
+        sortOrder: sortOrder.value,
+        name: name.value,
+        email: email.value
     });
     users.value = response.data.data;
     totalRecords.value = response.data.recordsTotal;
@@ -61,6 +66,12 @@ const refreshData = () => {
     loadUsers();
 };
 
+const applyFilters = () => {
+    currentPage.value = 1;
+    loadUsers();
+};
+
+
 </script>
 
 <template>
@@ -70,23 +81,28 @@ const refreshData = () => {
 <app-layout>
     <div class="grid">
         <div class="col-12">
-            <div class="card flex flex-1">
-                <div class="col-3 p-0 mr-5">
+            <div class="card flex flex-1 align-items-end">
+                <div class="col-3 p-0 mr-4">
                     <div class="flex flex-column gap-2">
                         <label for="name">Nome</label>
-                        <InputText id="name" v-model="value" />
+                        <InputText id="name" v-model="name" />
                     </div>
                 </div>
-                <div class="col-3 p-0 mr-5">
+                <div class="col-3 p-0 mr-4">
                     <div class="flex flex-column gap-2">
                         <label for="email">Email</label>
-                        <InputText id="email" v-model="value" datatype="email" />
+                        <InputText id="email" v-model="email" datatype="email" />
                     </div>
                 </div>
-                <div class="col-3 p-0 mr-5">
+                <div class="col-3 p-0 mr-4">
                     <div class="flex flex-column gap-2">
                         <label for="email">Data creazione</label>
-                        <InputText id="created_at" v-model="value" datatype="date" />
+                        <InputText id="created_at" v-model="created_at" datatype="date" />
+                    </div>
+                </div>
+                <div class="col-1 p-0 m-0">
+                    <div class="flex flex-column align-items-start">
+                        <Button label="Cerca" class="m-0" raised @click="applyFilters" />
                     </div>
                 </div>
             </div>
