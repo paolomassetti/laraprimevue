@@ -14,6 +14,7 @@ import StyleClass from 'primevue/styleclass';
 import ConfirmDialog from 'primevue/confirmdialog';
 import ConfirmPopup from 'primevue/confirmpopup';
 import Dialog from 'primevue/dialog';
+import Calendar from 'primevue/calendar';
 
 import { createApp, h } from 'vue';
 import { createInertiaApp, Link } from '@inertiajs/vue3';
@@ -22,13 +23,22 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
+const italianLocale = {
+    firstDayOfWeek: 1,
+    dayNames: ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
+    dayNamesShort: ["dom", "lun", "mar", "mer", "gio", "ven", "sab"],
+    dayNamesMin: ["Do", "Lu", "Ma", "Me", "Gi", "Ve", "Sa"],
+    monthNames: ["gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"],
+    monthNamesShort: ["gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ott", "nov", "dic"],
+}
+
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
     setup({ el, App, props, plugin }) {
         return createApp({ render: () => h(App, props) })
             .use(plugin)
-            .use(PrimeVue, { ripple: true })
+            .use(PrimeVue, { ripple: true, locale: italianLocale })
             .use(ToastService)
             .use(DialogService)
             .use(ConfirmationService)
@@ -42,6 +52,7 @@ createInertiaApp({
              .component('ConfirmPopup', ConfirmPopup)
              .component('Dialog', Dialog)
              .component('router-link', Link)
+             .component('Calendar', Calendar)
             .use(ZiggyVue)
             .mount(el);
     },

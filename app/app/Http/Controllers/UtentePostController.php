@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -28,6 +29,16 @@ class UtentePostController extends Controller
             $query->where('email', 'like', '%' . $request->input('email') . '%');
         }
 
+        if ($request->filled('created_at')) {
+
+            $date = Carbon::parse($request->input('created_at'), 'UTC')->format('Y-m-d');
+
+            $query->whereBetween('created_at', [
+                $date . ' 00:00:00',
+                $date . ' 23:59:59'
+            ]);
+        }
+
         $totalData = $query->count();
 
         if ($request->filled('sortField') && $request->filled('sortOrder')) {
@@ -45,5 +56,10 @@ class UtentePostController extends Controller
             'recordsFiltered' => $totalData,
             'data' => UserResource::collection($data)
         ]);
+    }
+
+    public function edit(User $user)
+    {
+        dd($user);
     }
 }
