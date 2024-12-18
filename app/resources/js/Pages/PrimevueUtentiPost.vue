@@ -173,6 +173,10 @@ const formatDateForServer = (date) => {
 .p-button.p-button-icon-only {
     width: 2rem;
     height: fit-content;
-    padding: 0,
+    padding: 0;
+    &:hover, &:focus, &:active {
+        background-color: transparent;
+        box-shadow: none;
+    }
 }
 </style>
