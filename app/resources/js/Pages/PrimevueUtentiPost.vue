@@ -31,13 +31,17 @@ const props = defineProps({
 const loadUsers = async () => {
     loading.value = true;
 
+    const formattedDate = formatDateForServer(created_at.value);
+
     const response = await axios.post('/utenti/search', {
         start: (currentPage.value - 1) * rowsPerPage.value,
         length: rowsPerPage.value,
         sortField: sortField.value,
         sortOrder: sortOrder.value,
         name: name.value,
-        email: email.value
+        email: email.value,
+        created_at: formattedDate
+
     });
     users.value = response.data.data;
     totalRecords.value = response.data.recordsTotal;
@@ -63,6 +67,9 @@ const refreshData = () => {
     sortOrder.value = 1;
     currentPage.value = 1;
     refreshKey.value++;
+    name.value = '';
+    email.value = '';
+    created_at.value = '';
     loadUsers();
 };
 
@@ -70,6 +77,20 @@ const applyFilters = () => {
     currentPage.value = 1;
     loadUsers();
 };
+
+const editUser = (url) => {
+    window.location.href = url;
+}
+
+const formatDateForServer = (date) => {
+    if (!date) return null;
+    let localDate = new Date(date);
+    localDate.setMinutes(localDate.getMinutes() - localDate.getTimezoneOffset());
+    console.log(localDate.toISOString().split("T")[0])
+    return localDate.toISOString().split("T")[0];
+};
+
+
 
 
 </script>
@@ -96,8 +117,8 @@ const applyFilters = () => {
                 </div>
                 <div class="col-3 p-0 mr-4">
                     <div class="flex flex-column gap-2">
-                        <label for="email">Data creazione</label>
-                        <InputText id="created_at" v-model="created_at" datatype="date" />
+                        <label for="created_at">Data creazione</label>
+                        <Calendar v-model="created_at" id="created_at" dateFormat="dd/mm/yy" />
                     </div>
                 </div>
                 <div class="col-1 p-0 m-0">
@@ -135,7 +156,12 @@ const applyFilters = () => {
                     <template #paginatorend></template>
                     <Column field="name" header="Name" sortable />
                     <Column field="email" header="Email" sortable />
-                    <Column field="created_at" header="Created At" sortable />
+                    <Column field="created_at" header="Data creazione" sortable />
+                    <Column field="azioni" style="width: 10%; min-width: 8rem" bodyStyle="text-align:center">
+                        <template #body="slotEdit">
+                            <Button icon="pi pi-pencil" @click="editUser(slotEdit.data.url_edit)" severity="warning" text rounded aria-label="Modifica" />
+                        </template>
+                    </Column>
                 </DataTable>
             </div>
         </div>
@@ -143,4 +169,10 @@ const applyFilters = () => {
 </app-layout>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.p-button.p-button-icon-only {
+    width: 2rem;
+    height: fit-content;
+    padding: 0,
+}
+</style>
