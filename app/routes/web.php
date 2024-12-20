@@ -15,10 +15,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/utenti/search', [UtentePostController::class, 'search'])->name('utenti.search');
     Route::get('/utente/edit/{user}', [UtentePostController::class, 'edit'])->name('utente.edit');
 
-    Route::get('/table', function () {
-        return Inertia::render('PrimevueTable');
-    });
-
     Route::get('/chart', function () {
         return Inertia::render('PrimevueChart');
     });

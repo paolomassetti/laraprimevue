@@ -15,6 +15,7 @@ import ConfirmDialog from 'primevue/confirmdialog';
 import ConfirmPopup from 'primevue/confirmpopup';
 import Dialog from 'primevue/dialog';
 import Calendar from 'primevue/calendar';
+import Button from 'primevue/button';
 
 import { createApp, h } from 'vue';
 import { createInertiaApp, Link } from '@inertiajs/vue3';

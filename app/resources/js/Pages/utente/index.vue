@@ -7,6 +7,7 @@ import { Head } from '@inertiajs/vue3';
 import AppLayout from "@/primevue/layout/AppLayout.vue";
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
+import { Link } from '@inertiajs/vue3';
 
 
 //DataTables
@@ -78,10 +79,6 @@ const applyFilters = () => {
     loadUsers();
 };
 
-const editUser = (url) => {
-    window.location.href = url;
-}
-
 const formatDateForServer = (date) => {
     if (!date) return null;
     let localDate = new Date(date);
@@ -89,9 +86,6 @@ const formatDateForServer = (date) => {
     console.log(localDate.toISOString().split("T")[0])
     return localDate.toISOString().split("T")[0];
 };
-
-
-
 
 </script>
 
@@ -158,8 +152,10 @@ const formatDateForServer = (date) => {
                     <Column field="email" header="Email" sortable />
                     <Column field="created_at" header="Data creazione" sortable />
                     <Column field="azioni" style="width: 10%; min-width: 8rem" bodyStyle="text-align:center">
-                        <template #body="slotEdit">
-                            <Button icon="pi pi-pencil" @click="editUser(slotEdit.data.url_edit)" severity="warning" text rounded aria-label="Modifica" />
+                        <template #body="slotProps">
+                            <Link :href="slotProps.data.url_edit">
+                                <Button icon="pi pi-pencil" severity="warning" text rounded aria-label="Modifica"/>
+                            </Link>
                         </template>
                     </Column>
                 </DataTable>

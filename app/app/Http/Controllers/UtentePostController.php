@@ -12,7 +12,7 @@ class UtentePostController extends Controller
 {
     public function index()
     {
-        return Inertia::render('PrimevueUtentiPost', [
+        return Inertia::render('utente/index', [
             'pageTitle' => 'Utenti post',
         ]);
     }
@@ -60,6 +60,9 @@ class UtentePostController extends Controller
 
     public function edit(User $user)
     {
-        dd($user);
+        return Inertia::render('utente/edit', [
+            'pageTitle' => 'Modifica utente',
+            'user' => $user,
+        ]);
     }
 }
