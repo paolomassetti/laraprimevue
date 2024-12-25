@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UtenteRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Carbon\Carbon;
@@ -64,5 +65,11 @@ class UtentePostController extends Controller
             'pageTitle' => 'Modifica utente',
             'user' => $user,
         ]);
+    }
+
+    public function update(UtenteRequest $request, User $user)
+    {
+        $user->update($request->validated());
+        return redirect()->route('utenti.post')->with('success', 'utente aggiornato con successo');
     }
 }

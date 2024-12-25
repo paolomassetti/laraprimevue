@@ -8,7 +8,12 @@ import AppLayout from "@/primevue/layout/AppLayout.vue";
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import { Link } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3'
+import Toast from 'primevue/toast';
+import { useToast } from 'primevue/usetoast';
 
+const toast = useToast();
+const flash = usePage().props.value?.flash || {};
 
 //DataTables
 const users = ref([]);
@@ -49,7 +54,19 @@ const loadUsers = async () => {
     loading.value = false;
 };
 
-onMounted(loadUsers);
+onMounted(() => {
+    console.log('Page props:', usePage().props.value);
+    if (flash.success) {
+        toast.add({
+            severity: 'success',
+            summary: 'Successo',
+            detail: flash.success,
+            life: 3000,
+        });
+    }
+
+    loadUsers();
+});
 
 const onPage = event => {
     currentPage.value = event.page + 1;
@@ -90,6 +107,7 @@ const formatDateForServer = (date) => {
 </script>
 
 <template>
+<Toast />
 <Head>
     <title>{{ pageTitle }}</title>
 </Head>

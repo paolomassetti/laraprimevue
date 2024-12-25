@@ -1,7 +1,6 @@
 <script setup>
-import { Head } from '@inertiajs/vue3';
+import { Head, useForm  } from '@inertiajs/vue3';
 import AppLayout from "@/primevue/layout/AppLayout.vue";
-import { ref, onMounted } from 'vue';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 
@@ -10,6 +9,15 @@ const props = defineProps({
   user: Object
 });
 
+const form = useForm({
+  id: props.user.id,
+  name: props.user.name,
+  email: props.user.email,
+});
+
+const updateUserData = () => {
+  form.put(`/utente/update/${props.user.id}`, {});
+};
 
 </script>
 
@@ -25,18 +33,18 @@ const props = defineProps({
                     <div class="col-3 p-0 mr-4">
                         <div class="flex flex-column gap-2">
                             <label for="name">Nome</label>
-                            <InputText id="name" v-model="name" />
+                            <InputText id="name" v-model="form.name" />
                         </div>
                     </div>
                     <div class="col-3 p-0 mr-4">
                         <div class="flex flex-column gap-2">
                             <label for="email">Email</label>
-                            <InputText id="email" v-model="email" datatype="email" />
+                            <InputText id="email" v-model="form.email" datatype="email" />
                         </div>
                     </div>
                 <div class="col-1 p-0 m-0">
                     <div class="flex flex-column align-items-start">
-                        <Button label="Cerca" class="m-0" raised @click="changeUserData" />
+                        <Button label="Aggiorna" severity="success" class="m-0" raised @click="updateUserData" />
                     </div>
                 </div>
             </div>
