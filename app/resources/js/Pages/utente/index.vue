@@ -173,7 +173,10 @@ const formatDateForServer = (date) => {
                     <Column field="azioni" style="width: 10%; min-width: 8rem" bodyStyle="text-align:center">
                         <template #body="slotProps">
                             <Link :href="slotProps.data.url_edit">
-                                <Button icon="pi pi-pencil" severity="warning" text rounded aria-label="Modifica"/>
+                                <Button icon="pi pi-pencil" v-tooltip.bottom="'Modifica utente'" severity="warning" text rounded aria-label="Modifica"/>
+                            </Link>
+                            <Link>
+                                <Button icon="pi pi-times" v-tooltip.bottom="'Elimina utente'" severity="danger" text rounded aria-label="Elimina"/>
                             </Link>
                         </template>
                     </Column>
