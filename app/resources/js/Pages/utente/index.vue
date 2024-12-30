@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import axios from 'axios';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
@@ -9,11 +9,7 @@ import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import { Link } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3'
-import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
-
-const toast = useToast();
-const flash = usePage().props.value?.flash || {};
 
 //DataTables
 const users = ref([]);
@@ -24,6 +20,9 @@ const sortField = ref('name');
 const sortOrder = ref(1);
 const loading = ref(false);
 const refreshKey = ref(0);
+
+//Toast
+let successMsg = ref(null);
 
 //Filters
 const name = ref(null);
@@ -54,14 +53,17 @@ const loadUsers = async () => {
     loading.value = false;
 };
 
+const toast = useToast();
+const page = usePage();
+successMsg = computed(() => page.props.flash.success);
+
 onMounted(() => {
-    console.log('Page props:', usePage().props.value);
-    if (flash.success) {
+    if (page.props.flash.success) {
         toast.add({
             severity: 'success',
-            summary: 'Successo',
-            detail: flash.success,
-            life: 3000,
+            summary: 'Congratulazioni!',
+            detail: successMsg,
+            life: 3000
         });
     }
 
@@ -105,12 +107,11 @@ const formatDateForServer = (date) => {
 };
 
 </script>
-
 <template>
-<Toast />
 <Head>
     <title>{{ pageTitle }}</title>
 </Head>
+<Toast />
 <app-layout>
     <div class="grid">
         <div class="col-12">
