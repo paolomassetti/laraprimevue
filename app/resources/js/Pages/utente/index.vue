@@ -53,22 +53,35 @@ const loadUsers = async () => {
     loading.value = false;
 };
 
-const toast = useToast();
-const page = usePage();
-successMsg = computed(() => page.props.flash.success);
+const toast = useToast()
+const page = usePage()
+successMsg = computed(() => page.props.flash.success)
 
 onMounted(() => {
-    if (page.props.flash.success) {
-        toast.add({
-            severity: 'success',
-            summary: 'Congratulazioni!',
-            detail: successMsg,
-            life: 3000
-        });
-    }
-
-    loadUsers();
+    showToast()
+    loadUsers()
 });
+
+const showToast = () => {
+
+    if (page.props.flash.success) {
+        try {
+            toast.add({
+                severity: 'success',
+                summary: 'Congratulazioni!',
+                detail: successMsg,
+                life: 3000
+            });
+        } catch(error) {
+            toast.add({
+                severity: 'error',
+                summary: 'Errore',
+                detail: 'Operazione Fallita',
+                life: 3000
+            });
+        }
+    }
+}
 
 const onPage = event => {
     currentPage.value = event.page + 1;
@@ -173,10 +186,28 @@ const formatDateForServer = (date) => {
                     <Column field="azioni" style="width: 10%; min-width: 8rem" bodyStyle="text-align:center">
                         <template #body="slotProps">
                             <Link :href="slotProps.data.url_edit">
-                                <Button icon="pi pi-pencil" v-tooltip.bottom="'Modifica utente'" severity="warning" text rounded aria-label="Modifica"/>
+                                <Button
+                                    icon="pi pi-pencil"
+                                    v-tooltip.bottom="'Modifica utente'"
+                                    severity="warning"
+                                    text rounded
+                                    aria-label="Modifica"
+                                />
                             </Link>
-                            <Link>
-                                <Button icon="pi pi-times" v-tooltip.bottom="'Elimina utente'" severity="danger" text rounded aria-label="Elimina"/>
+                            <Link
+                                :href="slotProps.data.url_delete"
+                                as="button"
+                                class="delete-button"
+                                method="delete"
+                                @success="() => { refreshData(); showToast(); }
+                            ">
+                                <Button
+                                    icon="pi pi-times"
+                                    v-tooltip.bottom="'Elimina utente'"
+                                    severity="danger"
+                                    text rounded
+                                    aria-label="Elimina"
+                                />
                             </Link>
                         </template>
                     </Column>
@@ -188,13 +219,20 @@ const formatDateForServer = (date) => {
 </template>
 
 <style scoped lang="scss">
-.p-button.p-button-icon-only {
-    width: 2rem;
-    height: fit-content;
-    padding: 0;
-    &:hover, &:focus, &:active {
-        background-color: transparent;
-        box-shadow: none;
+    .p-button.p-button-icon-only {
+        width: 2rem;
+        height: fit-content;
+        padding: 0;
+        &:hover, &:focus, &:active {
+            background-color: transparent;
+            box-shadow: none;
+        }
     }
-}
+
+    .delete-button {
+        background-color: transparent;
+        border: none;
+        padding: 0;
+        margin: 0;
+    }
 </style>

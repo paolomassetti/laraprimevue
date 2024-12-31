@@ -20,6 +20,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'created_at' => $this->created_at->format('d/m/Y'),
             'url_edit' => route('utente.edit', ['user' => $this->id]),
+            'url_delete' => route('utente.destroy', ['user' => $this->id]),
         ];
     }
 }
