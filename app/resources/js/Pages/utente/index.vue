@@ -21,9 +21,6 @@ const sortOrder = ref(1);
 const loading = ref(false);
 const refreshKey = ref(0);
 
-//Toast
-let successMsg = ref(null);
-
 //Filters
 const name = ref(null);
 const email = ref(null);
@@ -53,9 +50,34 @@ const loadUsers = async () => {
     loading.value = false;
 };
 
+//Toast
+let successMsg = ref(null);
 const toast = useToast()
 const page = usePage()
 successMsg = computed(() => page.props.flash.success)
+
+//Delete user
+const visible = ref(false);
+let currentUrlDelete = ref(null);
+
+const showTemplate = (url) => {
+    currentUrlDelete = url
+    if (!visible.value) {
+        toast.add({
+            severity: 'warn',
+            summary: 'Vuoi davvere eliminare l\'utente?',
+            group: 'confirmation',
+            sticky: true,
+        });
+        visible.value = true;
+    }
+};
+
+const onClose = () => {
+    toast.removeGroup('confirmation');
+    visible.value = false;
+}
+
 
 onMounted(() => {
     showToast()
@@ -124,7 +146,45 @@ const formatDateForServer = (date) => {
 <Head>
     <title>{{ pageTitle }}</title>
 </Head>
-<Toast />
+
+<Toast position="center"/>
+
+<Toast position="center" group="confirmation" @close="onClose">
+    <template #message="slotProps">
+        <div class="flex flex-column align-items-start" style="flex: 1">
+            <i class="pi pi-exclamation-triangle" style="font-size: 2rem"></i>
+            <div class="font-medium text-lg my-4 text-900">{{ slotProps.message.summary }}</div>
+            <div class="flex gap-2">
+                <Link
+                :href="currentUrlDelete"
+                as="button"
+                class="delete-button"
+                method="delete"
+                @success="() => {
+                    onClose();
+                    refreshData();
+                    showToast();
+                }
+            ">
+                <Button
+                    label="Conferma"
+                    severity="success"
+                    rounded
+                />
+            </Link>
+                <Button
+                    class="p-button-sm shadow-none"
+                    label="Annulla"
+                    severity="warning"
+                    rounded
+                    outlined
+                    @click="onClose"
+                >
+                </Button>
+            </div>
+        </div>
+    </template>
+</Toast>
 <app-layout>
     <div class="grid">
         <div class="col-12">
@@ -194,21 +254,15 @@ const formatDateForServer = (date) => {
                                     aria-label="Modifica"
                                 />
                             </Link>
-                            <Link
-                                :href="slotProps.data.url_delete"
-                                as="button"
-                                class="delete-button"
-                                method="delete"
-                                @success="() => { refreshData(); showToast(); }
-                            ">
-                                <Button
-                                    icon="pi pi-times"
-                                    v-tooltip.bottom="'Elimina utente'"
-                                    severity="danger"
-                                    text rounded
-                                    aria-label="Elimina"
-                                />
-                            </Link>
+
+                            <Button
+                                @click="showTemplate(slotProps.data.url_delete)"
+                                icon="pi pi-times"
+                                v-tooltip.bottom="'Elimina utente'"
+                                severity="danger"
+                                text rounded
+                                aria-label="Elimina"
+                            />
                         </template>
                     </Column>
                 </DataTable>
@@ -230,7 +284,8 @@ const formatDateForServer = (date) => {
     }
 
     .delete-button {
-        background-color: transparent;
+        line-height: 1;
+        background: transparent;
         border: none;
         padding: 0;
         margin: 0;
