@@ -7,6 +7,7 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 
 class UtentePostController extends Controller
@@ -44,7 +45,7 @@ class UtentePostController extends Controller
 
         if ($request->filled('sortField') && $request->filled('sortOrder')) {
             $sortField = $request->input('sortField');
-            $sortOrder = $request->input('sortOrder') == 1 ? 'asc' : 'desc';
+            $sortOrder = $request->input('sortOrder') == 1 ? 'desc' : 'asc';
             $query->orderBy($sortField, $sortOrder);
         }
 
@@ -59,6 +60,28 @@ class UtentePostController extends Controller
         ]);
     }
 
+    public function create()
+    {
+        return Inertia::render('utente/new', [
+            'pageTitle' => 'Crea utente',
+        ]);
+    }
+
+    public function store(UtenteRequest $request)
+    {
+        $user = User::create([
+            'name' => $request->validated('name'),
+            'email' => $request->validated('email'),
+            'password' => Hash::make('password123'),
+            'deleted_at' => null,
+        ]);
+
+        return redirect()
+                    ->route('utenti.post')
+                    ->with('success', 'utente creato con successo');
+
+    }
+
     public function edit(User $user)
     {
         return Inertia::render('utente/edit', [
@@ -70,12 +93,16 @@ class UtentePostController extends Controller
     public function update(UtenteRequest $request, User $user)
     {
         $user->update($request->validated());
-        return redirect()->route('utenti.post')->with('success', 'utente aggiornato con successo');
+        return redirect()
+                    ->route('utenti.post')
+                    ->with('success', 'utente aggiornato con successo');
     }
 
     public function destroy(User $user)
     {
         $user->delete();
-        return redirect()->route('utenti.post')->with('success', 'utente eliminato con successo');
+        return redirect()
+                    ->route('utenti.post')
+                    ->with('success', 'utente eliminato con successo');
     }
 }

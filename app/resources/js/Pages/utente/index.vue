@@ -10,13 +10,14 @@ import InputText from 'primevue/inputtext';
 import { Link } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3'
 import { useToast } from 'primevue/usetoast';
+import { router } from '@inertiajs/vue3';
 
 //DataTables
 const users = ref([])
 const totalRecords = ref(0)
 const currentPage = ref(1)
 const rowsPerPage = ref(10)
-const sortField = ref('name')
+const sortField = ref('created_at')
 const sortOrder = ref(1)
 const loading = ref(false)
 const refreshKey = ref(0)
@@ -142,6 +143,10 @@ const formatDateForServer = (date) => {
     return localDate.toISOString().split("T")[0];
 };
 
+const createUser = () => {
+    router.visit('/utente/new');
+};
+
 </script>
 <template>
 <Head>
@@ -216,6 +221,7 @@ const formatDateForServer = (date) => {
             </div>
         </div>
     </div>
+
     <div class="grid">
         <div class="col-12">
             <div class="card">
@@ -237,6 +243,20 @@ const formatDateForServer = (date) => {
                     :rowsPerPageOptions="[5, 10, 20, 50]"
                 >
                     <template #empty> Nessun utente trovato. </template>
+                    <template #header>
+                        <div class="flex flex-wrap align-items-center justify-content-between gap-2">
+                            <span class="text-xl text-900 font-bold">{{ pageTitle }}</span>
+                            <Button
+                                icon="pi pi-plus"
+                                class="add-user"
+                                severity="success"
+                                rounded
+                                raised
+                                v-tooltip.left="'Aggiungi utente'"
+                                @click="createUser"
+                            />
+                        </div>
+                    </template>
                     <template #paginatorstart>
                         <Button v-tooltip.bottom="'Ricarica tabella'" type="button" icon="pi pi-refresh" @click="refreshData" text />
                     </template>
@@ -244,12 +264,13 @@ const formatDateForServer = (date) => {
                     <Column field="name" header="Name" sortable />
                     <Column field="email" header="Email" sortable />
                     <Column field="created_at" header="Data creazione" sortable />
-                    <Column field="azioni" style="width: 10%; min-width: 8rem" bodyStyle="text-align:center">
+                    <Column field="azioni" style="width: 10%; min-width: 8rem" bodyStyle="text-align:right">
                         <template #body="slotProps">
                             <Link :href="slotProps.data.url_edit">
                                 <Button
+                                    class="action-button"
                                     icon="pi pi-pencil"
-                                    v-tooltip.bottom="'Modifica utente'"
+                                    v-tooltip.left="'Modifica utente'"
                                     severity="warning"
                                     text rounded
                                     aria-label="Modifica"
@@ -259,7 +280,8 @@ const formatDateForServer = (date) => {
                             <Button
                                 @click="showTemplate(slotProps.data.url_delete)"
                                 icon="pi pi-times"
-                                v-tooltip.bottom="'Elimina utente'"
+                                class="action-button"
+                                v-tooltip.left="'Elimina utente'"
                                 severity="danger"
                                 text rounded
                                 aria-label="Elimina"
@@ -274,7 +296,7 @@ const formatDateForServer = (date) => {
 </template>
 
 <style scoped lang="scss">
-    .p-button.p-button-icon-only {
+    .action-button {
         width: 2rem;
         height: fit-content;
         padding: 0;
@@ -282,6 +304,11 @@ const formatDateForServer = (date) => {
             background-color: transparent;
             box-shadow: none;
         }
+    }
+
+    .add-user {
+        height: 2.5rem;
+        width: 2.5rem;
     }
 
     .delete-button {
