@@ -1711,7 +1711,7 @@
   }
   .p-togglebutton.p-button .p-button-icon-left,
 .p-togglebutton.p-button .p-button-icon-right {
-    color: #6b7280;
+    color: white;
   }
   .p-togglebutton.p-button:not(.p-disabled).p-focus {
     outline: 0 none;
@@ -1722,11 +1722,11 @@
   .p-togglebutton.p-button:not(.p-disabled):not(.p-highlight):hover {
     background: #f3f4f6;
     border-color: #d1d5db;
-    color: #4b5563;
+    color: white;
   }
   .p-togglebutton.p-button:not(.p-disabled):not(.p-highlight):hover .p-button-icon-left,
 .p-togglebutton.p-button:not(.p-disabled):not(.p-highlight):hover .p-button-icon-right {
-    color: #374151;
+    color: white;
   }
   .p-togglebutton.p-button.p-highlight {
     background: #6366F1;

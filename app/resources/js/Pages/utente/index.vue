@@ -1,16 +1,18 @@
 <script setup>
 import { computed, ref, onMounted } from 'vue';
-import axios from 'axios';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
 import { Head } from '@inertiajs/vue3';
-import AppLayout from "@/primevue/layout/AppLayout.vue";
-import Button from 'primevue/button';
-import InputText from 'primevue/inputtext';
 import { Link } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3'
 import { useToast } from 'primevue/usetoast';
 import { router } from '@inertiajs/vue3';
+import { useConfirm } from "primevue/useconfirm";
+import axios from 'axios';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import ToggleButton from 'primevue/togglebutton';
+import AppLayout from "@/primevue/layout/AppLayout.vue";
+import Button from 'primevue/button';
+import InputText from 'primevue/inputtext';
 
 //DataTables
 const users = ref([])
@@ -26,6 +28,7 @@ const refreshKey = ref(0)
 const name = ref(null)
 const email = ref(null)
 const created_at = ref(null)
+const filtersVisibily = ref(false)
 
 const props = defineProps({
   pageTitle: String,
@@ -59,31 +62,23 @@ const page = usePage()
 successMsg = computed(() => page.props.flash.success)
 errorMsg = computed(() => page.props.flash.error)
 
-//Delete user
-const visible = ref(false)
+//Confirm
+const confirm = useConfirm();
 let currentUrlDelete = ref(null)
 
-const showTemplate = (url) => {
+const requireConfirmation = (url) => {
     currentUrlDelete = url
-    if (!visible.value) {
-        toast.add({
-            severity: 'warn',
-            summary: 'Vuoi davvere eliminare l\'utente?',
-            group: 'confirmation',
-            sticky: true,
-        });
-        visible.value = true
-    }
+    confirm.require({
+        group: 'headless',
+        header: 'Vuoi procedere?',
+        message: 'L\'utente sarà eliminato',
+    });
 };
 
-const onClose = () => {
-    toast.removeGroup('confirmation')
-    visible.value = false
-}
-
-
 onMounted(() => {
-    if (page.props.flash.success || page.props.flash.error) showToast()
+    if (page.props.flash.success || page.props.flash.error) {
+        showToast()
+    }
     loadUsers()
 });
 
@@ -92,18 +87,16 @@ const showToast = () => {
         toast.add({
             severity: 'success',
             summary: 'Congratulazioni!',
-            detail: successMsg.value,
+            detail: successMsg,
             life: 3000
         });
-        page.props.flash.success = null
     } catch(error) {
         toast.add({
             severity: 'error',
             summary: 'Errore',
-            detail: errorMsg.value,
+            detail: errorMsg,
             life: 3000
         });
-        page.props.flash.error = null
     }
 }
 
@@ -120,7 +113,7 @@ const onSort = event => {
 }
 
 const refreshData = () => {
-    sortField.value = 'name'
+    sortField.value = 'created_at'
     sortOrder.value = 1
     currentPage.value = 1
     refreshKey.value++
@@ -155,21 +148,24 @@ const createUser = () => {
 
 <Toast position="center"/>
 
-<Toast position="center" group="confirmation" @close="onClose">
-    <template #message="slotProps">
-        <div class="flex flex-column align-items-start" style="flex: 1">
-            <i class="pi pi-exclamation-triangle" style="font-size: 2rem"></i>
-            <div class="font-medium text-lg my-4 text-900 text-orange-600">{{ slotProps.message.summary }}</div>
-            <div class="flex gap-2">
+<ConfirmDialog group="headless">
+    <template #container="{ message, rejectCallback, acceptCallback }">
+        <div class="flex flex-column align-items-center p-5 surface-overlay border-round">
+            <div class="border-circle bg-primary inline-flex justify-content-center align-items-center h-6rem w-6rem -mt-8">
+                <i class="pi pi-question text-5xl"></i>
+            </div>
+            <span class="font-bold text-2xl block mb-2 mt-4">{{ message.header }}</span>
+            <p class="mb-0">{{ message.message }}</p>
+            <div class="flex align-items-center gap-2 mt-4">
                 <Link
                 :href="currentUrlDelete"
                 as="button"
                 class="delete-button"
                 method="delete"
                 @success="() => {
-                    onClose();
-                    refreshData();
-                    showToast();
+                    acceptCallback()
+                    refreshData()
+                    showToast()
                 }
             ">
                 <Button
@@ -178,49 +174,51 @@ const createUser = () => {
                     rounded
                 />
             </Link>
-                <Button
-                    class="p-button-sm shadow-none"
-                    label="Annulla"
-                    severity="warning"
-                    rounded
-                    outlined
-                    @click="onClose"
-                >
-                </Button>
+            <Button
+                class="shadow-none"
+                label="Annulla"
+                rounded
+                outlined
+                @click="rejectCallback"
+            >
+            </Button>
             </div>
         </div>
     </template>
-</Toast>
+</ConfirmDialog>
+
 <app-layout>
-    <div class="grid">
-        <div class="col-12">
-            <div class="card flex flex-1 align-items-end">
-                <div class="col-3 p-0 mr-4">
-                    <div class="flex flex-column gap-2">
-                        <label for="name">Nome</label>
-                        <InputText id="name" v-model="name" />
+    <transition name="slide-fade">
+        <div v-show="filtersVisibily" class="grid">
+            <div class="col-12">
+                <div class="card flex flex-1 align-items-end">
+                    <div class="col-3 p-0 mr-4">
+                        <div class="flex flex-column gap-2">
+                            <label for="name">Nome</label>
+                            <InputText id="name" v-model="name" />
+                        </div>
                     </div>
-                </div>
-                <div class="col-3 p-0 mr-4">
-                    <div class="flex flex-column gap-2">
-                        <label for="email">Email</label>
-                        <InputText id="email" v-model="email" datatype="email" />
+                    <div class="col-3 p-0 mr-4">
+                        <div class="flex flex-column gap-2">
+                            <label for="email">Email</label>
+                            <InputText id="email" v-model="email" datatype="email" />
+                        </div>
                     </div>
-                </div>
-                <div class="col-3 p-0 mr-4">
-                    <div class="flex flex-column gap-2">
-                        <label for="created_at">Data creazione</label>
-                        <Calendar v-model="created_at" id="created_at" dateFormat="dd/mm/yy" />
+                    <div class="col-3 p-0 mr-4">
+                        <div class="flex flex-column gap-2">
+                            <label for="created_at">Data creazione</label>
+                            <Calendar v-model="created_at" id="created_at" dateFormat="dd/mm/yy" />
+                        </div>
                     </div>
-                </div>
-                <div class="col-1 p-0 m-0">
-                    <div class="flex flex-column align-items-start">
-                        <Button label="Cerca" class="m-0" raised @click="applyFilters" />
+                    <div class="col-1 p-0 m-0">
+                        <div class="flex flex-column align-items-start">
+                            <Button label="Cerca" class="m-0" raised @click="applyFilters" />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </transition>
 
     <div class="grid">
         <div class="col-12">
@@ -246,15 +244,26 @@ const createUser = () => {
                     <template #header>
                         <div class="flex flex-wrap align-items-center justify-content-between gap-2">
                             <span class="text-xl text-900 font-bold">{{ pageTitle }}</span>
-                            <Button
-                                icon="pi pi-plus"
-                                class="add-user"
-                                severity="success"
-                                rounded
-                                raised
-                                v-tooltip.left="'Aggiungi utente'"
-                                @click="createUser"
-                            />
+                            <div class="flex flex-wrap align-items-center justify-content-right gap-2">
+                                <ToggleButton
+                                    v-model="filtersVisibily"
+                                    class="toggle-filter shadow-none"
+                                    offIcon="pi pi-filter"
+                                    onIcon="pi pi-filter-slash"
+                                    onLabel=""
+                                    offLabel=""
+                                    active
+                                />
+                                <Button
+                                    icon="pi pi-plus"
+                                    class="add-user"
+                                    severity="success"
+                                    rounded
+                                    raised
+                                    v-tooltip.left="'Aggiungi utente'"
+                                    @click="createUser"
+                                />
+                            </div>
                         </div>
                     </template>
                     <template #paginatorstart>
@@ -278,7 +287,7 @@ const createUser = () => {
                             </Link>
 
                             <Button
-                                @click="showTemplate(slotProps.data.url_delete)"
+                                @click="requireConfirmation(slotProps.data.url_delete)"
                                 icon="pi pi-times"
                                 class="action-button"
                                 v-tooltip.left="'Elimina utente'"
@@ -317,5 +326,31 @@ const createUser = () => {
         border: none;
         padding: 0;
         margin: 0;
+    }
+
+    .toggle-filter {
+        background-color: #4F46E5;
+        border-radius: 50%;
+        border: none;
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+
+    .p-togglebutton.p-button .p-button-icon-left {
+        color: white !important;
+    }
+
+    .pi-filter:before { color: white !important; }
+
+    .slide-fade-enter-active, .slide-fade-leave-active {
+        transition: all 0.3s ease;
+    }
+    .slide-fade-enter-from, .slide-fade-leave-to {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    .slide-fade-enter-to, .slide-fade-leave-from {
+        opacity: 1;
+        transform: translateY(0);
     }
 </style>

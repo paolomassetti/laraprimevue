@@ -93,16 +93,12 @@ class UtentePostController extends Controller
     public function update(UtenteRequest $request, User $user)
     {
         $user->update($request->validated());
-        return redirect()
-                    ->route('utenti.post')
-                    ->with('success', 'utente aggiornato con successo');
+        return redirect()->route('utenti.post')->with('success', 'utente aggiornato con successo');
     }
 
     public function destroy(User $user)
     {
         $user->delete();
-        return redirect()
-                    ->route('utenti.post')
-                    ->with('success', 'utente eliminato con successo');
+        return redirect()->route('utenti.post')->with('success', 'utente eliminato con successo');
     }
 }

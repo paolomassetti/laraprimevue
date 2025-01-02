@@ -44,7 +44,7 @@ const storeUserData = () => {
                 </div>
                 <div class="col-1 p-0 m-0">
                     <div class="flex flex-column align-items-start">
-                        <Button type="submit" label="Crea" severity="success" class="m-0" raised />
+                        <Button type="submit" label="Salva" severity="success" class="m-0" raised />
                     </div>
                 </div>
             </div>
