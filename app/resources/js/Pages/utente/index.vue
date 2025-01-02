@@ -12,28 +12,28 @@ import { usePage } from '@inertiajs/vue3'
 import { useToast } from 'primevue/usetoast';
 
 //DataTables
-const users = ref([]);
-const totalRecords = ref(0);
-const currentPage = ref(1);
-const rowsPerPage = ref(10);
-const sortField = ref('name');
-const sortOrder = ref(1);
-const loading = ref(false);
-const refreshKey = ref(0);
+const users = ref([])
+const totalRecords = ref(0)
+const currentPage = ref(1)
+const rowsPerPage = ref(10)
+const sortField = ref('name')
+const sortOrder = ref(1)
+const loading = ref(false)
+const refreshKey = ref(0)
 
 //Filters
-const name = ref(null);
-const email = ref(null);
-const created_at = ref(null);
+const name = ref(null)
+const email = ref(null)
+const created_at = ref(null)
 
 const props = defineProps({
   pageTitle: String,
 });
 
 const loadUsers = async () => {
-    loading.value = true;
+    loading.value = true
 
-    const formattedDate = formatDateForServer(created_at.value);
+    const formattedDate = formatDateForServer(created_at.value)
 
     const response = await axios.post('/utenti/search', {
         start: (currentPage.value - 1) * rowsPerPage.value,
@@ -45,20 +45,22 @@ const loadUsers = async () => {
         created_at: formattedDate
 
     });
-    users.value = response.data.data;
-    totalRecords.value = response.data.recordsTotal;
-    loading.value = false;
+    users.value = response.data.data
+    totalRecords.value = response.data.recordsTotal
+    loading.value = false
 };
 
 //Toast
-let successMsg = ref(null);
+let successMsg = ref(null)
+let errorMsg = ref(null)
 const toast = useToast()
 const page = usePage()
 successMsg = computed(() => page.props.flash.success)
+errorMsg = computed(() => page.props.flash.error)
 
 //Delete user
-const visible = ref(false);
-let currentUrlDelete = ref(null);
+const visible = ref(false)
+let currentUrlDelete = ref(null)
 
 const showTemplate = (url) => {
     currentUrlDelete = url
@@ -69,74 +71,73 @@ const showTemplate = (url) => {
             group: 'confirmation',
             sticky: true,
         });
-        visible.value = true;
+        visible.value = true
     }
 };
 
 const onClose = () => {
-    toast.removeGroup('confirmation');
-    visible.value = false;
+    toast.removeGroup('confirmation')
+    visible.value = false
 }
 
 
 onMounted(() => {
-    showToast()
+    if (page.props.flash.success || page.props.flash.error) showToast()
     loadUsers()
 });
 
 const showToast = () => {
-
-    if (page.props.flash.success) {
-        try {
-            toast.add({
-                severity: 'success',
-                summary: 'Congratulazioni!',
-                detail: successMsg,
-                life: 3000
-            });
-        } catch(error) {
-            toast.add({
-                severity: 'error',
-                summary: 'Errore',
-                detail: 'Operazione Fallita',
-                life: 3000
-            });
-        }
+    try {
+        toast.add({
+            severity: 'success',
+            summary: 'Congratulazioni!',
+            detail: successMsg.value,
+            life: 3000
+        });
+        page.props.flash.success = null
+    } catch(error) {
+        toast.add({
+            severity: 'error',
+            summary: 'Errore',
+            detail: errorMsg.value,
+            life: 3000
+        });
+        page.props.flash.error = null
     }
 }
 
 const onPage = event => {
-    currentPage.value = event.page + 1;
-    rowsPerPage.value = event.rows;
-    loadUsers();
+    currentPage.value = event.page + 1
+    rowsPerPage.value = event.rows
+    loadUsers()
 };
 
 const onSort = event => {
-    sortField.value = event.sortField;
-    sortOrder.value = event.sortOrder;
-    loadUsers();
-};
+    sortField.value = event.sortField
+    sortOrder.value = event.sortOrder
+    loadUsers()
+}
 
 const refreshData = () => {
-    sortField.value = 'name';
-    sortOrder.value = 1;
-    currentPage.value = 1;
-    refreshKey.value++;
-    name.value = '';
-    email.value = '';
-    created_at.value = '';
-    loadUsers();
+    sortField.value = 'name'
+    sortOrder.value = 1
+    currentPage.value = 1
+    refreshKey.value++
+    name.value = ''
+    email.value = ''
+    created_at.value = ''
+    loadUsers()
 };
 
 const applyFilters = () => {
-    currentPage.value = 1;
-    loadUsers();
+    currentPage.value = 1
+    loadUsers()
 };
 
 const formatDateForServer = (date) => {
-    if (!date) return null;
-    let localDate = new Date(date);
-    localDate.setMinutes(localDate.getMinutes() - localDate.getTimezoneOffset());
+    if (!date) return null
+    let localDate = new Date(date)
+    localDate.setMinutes(localDate.getMinutes() - localDate.getTimezoneOffset())
     console.log(localDate.toISOString().split("T")[0])
     return localDate.toISOString().split("T")[0];
 };
@@ -153,7 +154,7 @@ const formatDateForServer = (date) => {
     <template #message="slotProps">
         <div class="flex flex-column align-items-start" style="flex: 1">
             <i class="pi pi-exclamation-triangle" style="font-size: 2rem"></i>
-            <div class="font-medium text-lg my-4 text-900">{{ slotProps.message.summary }}</div>
+            <div class="font-medium text-lg my-4 text-900 text-orange-600">{{ slotProps.message.summary }}</div>
             <div class="flex gap-2">
                 <Link
                 :href="currentUrlDelete"
