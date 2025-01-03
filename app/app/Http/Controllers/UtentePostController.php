@@ -87,6 +87,7 @@ class UtentePostController extends Controller
         return Inertia::render('utente/edit', [
             'pageTitle' => 'Modifica utente',
             'user' => $user,
+            'backUrl' => route('utenti.post'),
         ]);
     }
 

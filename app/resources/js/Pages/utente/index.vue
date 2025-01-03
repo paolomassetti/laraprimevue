@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import { Link } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3'
@@ -55,12 +55,11 @@ const loadUsers = async () => {
 };
 
 //Toast
-let successMsg = ref(null)
-let errorMsg = ref(null)
+let successMsg = ref('')
+let errorMsg = ref('')
+const toastShown = ref(false)
 const toast = useToast()
 const page = usePage()
-successMsg = computed(() => page.props.flash.success)
-errorMsg = computed(() => page.props.flash.error)
 
 //Confirm
 const confirm = useConfirm();
@@ -76,29 +75,38 @@ const requireConfirmation = (url) => {
 };
 
 onMounted(() => {
-    if (page.props.flash.success || page.props.flash.error) {
-        showToast()
-    }
+    successMsg.value = page.props.flash.success || '';
+    errorMsg.value = page.props.flash.error || '';
+
+    watch(() => page.props.flash.success, (newVal) => {
+        if (newVal && !toastShown.value) {
+            toast.add({
+                severity: 'success',
+                summary: 'Congratulazioni!',
+                detail: newVal,
+                life: 3000
+            });
+            toastShown.value = true;
+        }
+    });
+
+    watch(() => page.props.flash.error, (newVal) => {
+        if (newVal && !toastShown.value) {
+            toast.add({
+                severity: 'error',
+                summary: 'Errore',
+                detail: newVal,
+                life: 3000
+            });
+            toastShown.value = true;
+        }
+    });
     loadUsers()
 });
 
-const showToast = () => {
-    try {
-        toast.add({
-            severity: 'success',
-            summary: 'Congratulazioni!',
-            detail: successMsg,
-            life: 3000
-        });
-    } catch(error) {
-        toast.add({
-            severity: 'error',
-            summary: 'Errore',
-            detail: errorMsg,
-            life: 3000
-        });
-    }
-}
+watch(() => page.props.flash, () => {
+    toastShown.value = false;
+}, { deep: true });
 
 const onPage = event => {
     currentPage.value = event.page + 1
