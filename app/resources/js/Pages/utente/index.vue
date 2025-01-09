@@ -7,12 +7,11 @@ import { useToast } from 'primevue/usetoast';
 import { router } from '@inertiajs/vue3';
 import { useConfirm } from "primevue/useconfirm";
 import axios from 'axios';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
 import ToggleButton from 'primevue/togglebutton';
-import AppLayout from "@/primevue/layout/AppLayout.vue";
 import Button from 'primevue/button';
+import AppLayout from "@/primevue/layout/AppLayout.vue";
 import InputText from 'primevue/inputtext';
+import IndexTable from '@/Components/indexTable.vue';
 
 //DataTables
 const users = ref([])
@@ -74,6 +73,13 @@ const requireConfirmation = (url) => {
     });
 };
 
+//Columns
+const userColumns = [
+    { field: 'name', header: 'Nome', sortable: true },
+    { field: 'email', header: 'Email', sortable: true },
+    { field: 'created_at', header: 'Data Creazione', sortable: true }
+];
+
 onMounted(() => {
     successMsg.value = page.props.flash.success || '';
     errorMsg.value = page.props.flash.error || '';
@@ -105,20 +111,20 @@ onMounted(() => {
 });
 
 watch(() => page.props.flash, () => {
-    toastShown.value = false;
+    toastShown.value = false
 }, { deep: true });
 
-const onPage = event => {
-    currentPage.value = event.page + 1
-    rowsPerPage.value = event.rows
-    loadUsers()
+const handlePageChange = ({ page, rows }) => {
+    rowsPerPage.value = rows
+    currentPage.value = page
+    loadUsers();
 };
 
-const onSort = event => {
-    sortField.value = event.sortField
-    sortOrder.value = event.sortOrder
-    loadUsers()
-}
+const handleSortChange = ({ sortField: field, sortOrder: order }) => {
+    sortField.value = field
+    sortOrder.value = order
+    loadUsers();
+};
 
 const refreshData = () => {
     sortField.value = 'created_at'
@@ -231,27 +237,29 @@ const createUser = () => {
     <div class="grid">
         <div class="col-12">
             <div class="card">
-                <DataTable
-                    :key="refreshKey"
-                    :value="users"
-                    :paginator="true"
-                    :rows="rowsPerPage"
-                    :totalRecords="totalRecords"
-                    :lazy="true"
+                <IndexTable
+                    :refresh-key="refreshKey"
+                    :data="users"
+                    :columns="userColumns"
+                    :rows-per-page="rowsPerPage"
+                    :total-records="totalRecords"
                     :loading="loading"
-                    @page="onPage"
-                    @sort="onSort"
-                    :sortField="sortField"
-                    :sortOrder="sortOrder"
+                    :sort-field="sortField"
+                    :sort-order="sortOrder"
                     stripedRows
                     rowHover
                     responsiveLayout="scroll"
-                    :rowsPerPageOptions="[5, 10, 20, 50]"
+                    @updatePage="handlePageChange"
+                    @updateSort="handleSortChange"
+                    @refreshData="refreshData"
                 >
-                    <template #empty> Nessun utente trovato. </template>
+                    <template #empty>
+                        <p>Nessun utente trovato.</p>
+                    </template>
+
                     <template #header>
                         <div class="flex flex-wrap align-items-center justify-content-between gap-2">
-                            <span class="text-xl text-900 font-bold">{{ pageTitle }}</span>
+                            <span class="text-xl text-900 font-bold">{{ props.pageTitle }}</span>
                             <div class="flex flex-wrap align-items-center justify-content-right gap-2">
                                 <ToggleButton
                                     v-model="filtersVisibily"
@@ -274,38 +282,28 @@ const createUser = () => {
                             </div>
                         </div>
                     </template>
-                    <template #paginatorstart>
-                        <Button v-tooltip.bottom="'Ricarica tabella'" type="button" icon="pi pi-refresh" @click="refreshData" text />
-                    </template>
-                    <template #paginatorend></template>
-                    <Column field="name" header="Name" sortable />
-                    <Column field="email" header="Email" sortable />
-                    <Column field="created_at" header="Data creazione" sortable />
-                    <Column field="azioni" style="width: 10%; min-width: 8rem" bodyStyle="text-align:right">
-                        <template #body="slotProps">
-                            <Link :href="slotProps.data.url_edit">
-                                <Button
-                                    class="action-button"
-                                    icon="pi pi-pencil"
-                                    v-tooltip.left="'Modifica utente'"
-                                    severity="warning"
-                                    text rounded
-                                    aria-label="Modifica"
-                                />
-                            </Link>
 
-                            <Button
-                                @click="requireConfirmation(slotProps.data.url_delete)"
-                                icon="pi pi-times"
-                                class="action-button"
-                                v-tooltip.left="'Elimina utente'"
-                                severity="danger"
-                                text rounded
-                                aria-label="Elimina"
-                            />
-                        </template>
-                    </Column>
-                </DataTable>
+                    <template #actions="{ data }">
+                        <Button
+                            icon="pi pi-pencil"
+                            class="action-button"
+                            severity="warning"
+                            v-tooltip.left="'Elimina utente'"
+                            text rounded
+                            @click="() => router.visit(data.url_edit)"
+                        />
+                        <Button
+                            @click="requireConfirmation(data.url_delete)"
+                            icon="pi pi-times"
+                            class="action-button"
+                            v-tooltip.left="'Elimina utente'"
+                            severity="danger"
+                            text rounded
+                            aria-label="Elimina"
+                        />
+                    </template>
+
+                </IndexTable>
             </div>
         </div>
     </div>
