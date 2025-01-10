@@ -32,10 +32,6 @@ const props = defineProps({
         type: Number,
         default: 1
     },
-    showFilters: {
-        type: Boolean,
-        default: true
-    },
     pageTitle: {
         type: String,
         default: ''
@@ -49,7 +45,6 @@ const props = defineProps({
 const emit = defineEmits([
     'updatePage',
     'updateSort',
-    'refreshData',
     'refreshData',
 ]);
 
@@ -115,5 +110,3 @@ const onSort = (event) => {
 
     </DataTable>
 </template>
-
-<style scoped></style>

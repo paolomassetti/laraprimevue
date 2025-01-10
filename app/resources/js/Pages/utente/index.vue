@@ -1,7 +1,6 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { Head } from '@inertiajs/vue3';
-import { Link } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3'
 import { useToast } from 'primevue/usetoast';
 import { router } from '@inertiajs/vue3';
@@ -12,6 +11,7 @@ import Button from 'primevue/button';
 import AppLayout from "@/primevue/layout/AppLayout.vue";
 import InputText from 'primevue/inputtext';
 import IndexTable from '@/Components/indexTable.vue';
+import Confirmation from '@/Components/Confirmation.vue';
 
 //DataTables
 const users = ref([])
@@ -46,7 +46,6 @@ const loadUsers = async () => {
         name: name.value,
         email: email.value,
         created_at: formattedDate
-
     });
     users.value = response.data.data
     totalRecords.value = response.data.recordsTotal
@@ -62,9 +61,10 @@ const page = usePage()
 
 //Confirm
 const confirm = useConfirm();
-let currentUrlDelete = ref(null)
+let currentUrlDelete = ref('')
 
 const requireConfirmation = (url) => {
+    console.log(url)
     currentUrlDelete = url
     confirm.require({
         group: 'headless',
@@ -162,44 +162,11 @@ const createUser = () => {
 
 <Toast position="center"/>
 
-<ConfirmDialog group="headless">
-    <template #container="{ message, rejectCallback, acceptCallback }">
-        <div class="flex flex-column align-items-center p-5 surface-overlay border-round">
-            <div class="border-circle bg-primary inline-flex justify-content-center align-items-center h-6rem w-6rem -mt-8">
-                <i class="pi pi-question text-5xl"></i>
-            </div>
-            <span class="font-bold text-2xl block mb-2 mt-4">{{ message.header }}</span>
-            <p class="mb-0">{{ message.message }}</p>
-            <div class="flex align-items-center gap-2 mt-4">
-                <Link
-                :href="currentUrlDelete"
-                as="button"
-                class="delete-button"
-                method="delete"
-                @success="() => {
-                    acceptCallback()
-                    refreshData()
-                    showToast()
-                }
-            ">
-                <Button
-                    label="Conferma"
-                    severity="success"
-                    rounded
-                />
-            </Link>
-            <Button
-                class="shadow-none"
-                label="Annulla"
-                rounded
-                outlined
-                @click="rejectCallback"
-            >
-            </Button>
-            </div>
-        </div>
-    </template>
-</ConfirmDialog>
+<Confirmation
+    group="headless"
+    :confirmation-url="currentUrlDelete"
+    @refreshData="refreshData"
+></Confirmation>
 
 <app-layout>
     <transition name="slide-fade">
@@ -324,14 +291,6 @@ const createUser = () => {
     .add-user {
         height: 2.5rem;
         width: 2.5rem;
-    }
-
-    .delete-button {
-        line-height: 1;
-        background: transparent;
-        border: none;
-        padding: 0;
-        margin: 0;
     }
 
     .toggle-filter {
