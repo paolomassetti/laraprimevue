@@ -60,11 +60,10 @@ const toast = useToast()
 const page = usePage()
 
 //Confirm
-const confirm = useConfirm();
+const confirm = useConfirm()
 let currentUrlDelete = ref('')
 
 const requireConfirmation = (url) => {
-    console.log(url)
     currentUrlDelete = url
     confirm.require({
         group: 'headless',
@@ -250,12 +249,14 @@ const createUser = () => {
                         </div>
                     </template>
 
-                    <template #actions="{ data }">
+                    <template
+                        #actions="{ data }"
+                        >
                         <Button
                             icon="pi pi-pencil"
                             class="action-button"
                             severity="warning"
-                            v-tooltip.left="'Elimina utente'"
+                            v-tooltip.left="'Modifica utente'"
                             text rounded
                             @click="() => router.visit(data.url_edit)"
                         />

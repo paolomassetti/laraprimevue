@@ -15,14 +15,24 @@ import ConfirmDialog from 'primevue/confirmdialog';
 import ConfirmPopup from 'primevue/confirmpopup';
 import Dialog from 'primevue/dialog';
 import Calendar from 'primevue/calendar';
+import axios from 'axios';
 
+import { router } from '@inertiajs/vue3';
 import { createApp, h } from 'vue';
 import { createInertiaApp, Link } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 
+const appName = import.meta.env.VITE_APP_NAME || 'PrimeVue';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+axios.interceptors.response.use(response => {
+    return response;
+}, error => {
+    if (error.response && (error.response.status === 401 || error.response.status === 419)) {
+        router.push('/login');
+    }
+    return Promise.reject(error);
+});
 
 const italianLocale = {
     firstDayOfWeek: 1,

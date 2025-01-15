@@ -102,7 +102,7 @@ const onSort = (event) => {
             :sortable="col.sortable"
         ></Column>
 
-        <Column header="Azioni" bodyStyle="text-align:right">
+        <Column header="azioni">
             <template #body="slotProps">
                 <slot name="actions" :data="slotProps.data"></slot>
             </template>

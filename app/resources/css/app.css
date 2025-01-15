@@ -1,1 +1,9 @@
 .p-button { box-shadow: none; }
+
+.delete-button {
+    line-height: 1;
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+}

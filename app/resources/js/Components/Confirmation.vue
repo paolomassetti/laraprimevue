@@ -62,13 +62,3 @@ const emit = defineEmits([
     </template>
 </ConfirmDialog>
 </template>
-
-<style scoped>
-    .delete-button {
-        line-height: 1;
-        background: transparent;
-        border: none;
-        padding: 0;
-        margin: 0;
-    }
-</style>
