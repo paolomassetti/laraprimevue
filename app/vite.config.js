@@ -27,6 +27,8 @@ export default defineConfig({
             host: 'localhost',
             port: 5173,
         },
+        origin: 'http://localhost:5173',
+        cors: true
     },
     css: {
         preprocessorOptions: {
