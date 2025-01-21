@@ -14,8 +14,9 @@ import StyleClass from 'primevue/styleclass';
 import ConfirmDialog from 'primevue/confirmdialog';
 import ConfirmPopup from 'primevue/confirmpopup';
 import Dialog from 'primevue/dialog';
-import Calendar from 'primevue/calendar';
+import DatePicker from 'primevue/datepicker';
 import axios from 'axios';
+import Aura from '@primevue/themes/aura';
 
 import { router } from '@inertiajs/vue3';
 import { createApp, h } from 'vue';
@@ -49,7 +50,13 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         return createApp({ render: () => h(App, props) })
             .use(plugin)
-            .use(PrimeVue, { ripple: true, locale: italianLocale })
+            .use(PrimeVue, {
+                ripple: true,
+                locale: italianLocale,
+                theme: {
+                    preset: Aura,
+                }
+            })
             .use(ToastService)
             .use(DialogService)
             .use(ConfirmationService)
@@ -63,7 +70,7 @@ createInertiaApp({
              .component('ConfirmPopup', ConfirmPopup)
              .component('Dialog', Dialog)
              .component('router-link', Link)
-             .component('Calendar', Calendar)
+             .component('DatePicker', DatePicker)
             .use(ZiggyVue)
             .mount(el);
     },
