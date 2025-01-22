@@ -9,13 +9,13 @@ import ConfirmationService from 'primevue/confirmationservice';
 import BadgeDirective from 'primevue/badgedirective';
 import Tooltip from 'primevue/tooltip';
 import InputText from 'primevue/inputtext';
-import Ripple from 'primevue/ripple';
 import StyleClass from 'primevue/styleclass';
 import ConfirmDialog from 'primevue/confirmdialog';
 import ConfirmPopup from 'primevue/confirmpopup';
 import Dialog from 'primevue/dialog';
 import DatePicker from 'primevue/datepicker';
 import axios from 'axios';
+import FloatLabel from 'primevue/floatlabel';
 import { definePreset } from '@primevue/themes';
 import Aura from '@primevue/themes/aura';
 
@@ -41,7 +41,7 @@ const italianLocale = {
     dayNames: ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
     dayNamesShort: ["dom", "lun", "mar", "mer", "gio", "ven", "sab"],
     dayNamesMin: ["Do", "Lu", "Ma", "Me", "Gi", "Ve", "Sa"],
-    monthNames: ["gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"],
+    monthNames: ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"],
     monthNamesShort: ["gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ott", "nov", "dic"],
 }
 
@@ -52,7 +52,6 @@ createInertiaApp({
         return createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(PrimeVue, {
-                ripple: true,
                 locale: italianLocale,
                 theme: {
                     preset: definePreset(Aura, {
@@ -80,7 +79,6 @@ createInertiaApp({
              .directive('tooltip', Tooltip)
              .directive('InputText', InputText)
              .directive('badge', BadgeDirective)
-             .directive('ripple', Ripple)
              .directive('styleclass', StyleClass)
              .component('Toast', Toast)
              .component('ConfirmDialog', ConfirmDialog)
@@ -88,6 +86,7 @@ createInertiaApp({
              .component('Dialog', Dialog)
              .component('router-link', Link)
              .component('DatePicker', DatePicker)
+             .component('FloatLabel', FloatLabel)
             .use(ZiggyVue)
             .mount(el);
     },

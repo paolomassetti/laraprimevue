@@ -133,7 +133,7 @@ const refreshData = () => {
     refreshKey.value++
     name.value = ''
     email.value = ''
-    created_at.value = ''
+    created_at.value = null
     loadUsers()
 };
 
@@ -146,7 +146,6 @@ const formatDateForServer = (date) => {
     if (!date) return null
     let localDate = new Date(date)
     localDate.setMinutes(localDate.getMinutes() - localDate.getTimezoneOffset())
-    console.log(localDate.toISOString().split("T")[0])
     return localDate.toISOString().split("T")[0];
 };
 
@@ -174,22 +173,28 @@ const createUser = () => {
             <div class="col-12">
                 <div class="card flex flex-1 align-items-end">
                     <div class="col-3 p-0 mr-4">
-                        <div class="flex flex-column gap-2">
-                            <label for="name">Nome</label>
-                            <InputText id="name" v-model="name" />
-                        </div>
+                        <FloatLabel>
+                            <div class="flex flex-column gap-2">
+                                <label for="name">Nome</label>
+                                <InputText id="name" v-model="name" />
+                            </div>
+                        </FloatLabel>
                     </div>
                     <div class="col-3 p-0 mr-4">
-                        <div class="flex flex-column gap-2">
-                            <label for="email">Email</label>
-                            <InputText id="email" v-model="email" datatype="email" />
-                        </div>
+                        <FloatLabel>
+                            <div class="flex flex-column gap-2">
+                                <label for="email">Email</label>
+                                <InputText id="email" v-model="email" datatype="email" />
+                            </div>
+                        </FloatLabel>
                     </div>
                     <div class="col-3 p-0 mr-4">
-                        <div class="flex flex-column gap-2">
-                            <label for="created_at">Data creazione</label>
-                            <DatePicker v-model="created_at" id="created_at" dateFormat="dd/mm/yy" />
-                        </div>
+                        <FloatLabel>
+                            <div class="flex flex-column gap-2">
+                                <label for="created_at">Data creazione</label>
+                                <DatePicker v-model="created_at" id="created_at" class="p-0 shadow-none" dateFormat="dd/mm/yy" />
+                            </div>
+                        </FloatLabel>
                     </div>
                     <div class="col-1 p-0 m-0">
                         <div class="flex flex-column align-items-start">
