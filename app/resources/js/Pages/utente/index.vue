@@ -22,7 +22,7 @@ const sortField = ref('created_at')
 const sortOrder = ref(1)
 const loading = ref(false)
 const refreshKey = ref(0)
-const size = ref({ label: 'Normal', value: 'normal' })
+const size = ref({ label: 'Normal', value: 'small' })
 
 //Filters
 const name = ref(null)
@@ -231,11 +231,9 @@ const createUser = () => {
                             <div class="flex flex-wrap align-items-center justify-content-right gap-2">
                                 <ToggleButton
                                     v-model="filtersVisibily"
-                                    class="shadow-none block mx-auto"
+                                    class="shadow-none filter-button"
                                     offIcon="pi pi-filter"
                                     onIcon="pi pi-filter-slash"
-                                    onLabel=""
-                                    offLabel=""
                                     active
                                 />
                                 <Button

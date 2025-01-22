@@ -79,7 +79,7 @@ function toggleMenu(event) {
             <span>SAKAI</span>
         </NavLink>
 
-        <button class="p-link layout-menu-button layout-topbar-button shadow-none" @click="onMenuToggle()">
+        <button class="p-link layout-menu-button layout-topbar-button shadow-none border-none" @click="onMenuToggle()">
             <i class="pi pi-bars"></i>
         </button>
 
@@ -88,7 +88,7 @@ function toggleMenu(event) {
         </button>
 
         <div class="layout-topbar-menu" :class="topbarMenuClasses">
-            <button @click="toggleMenu" class="p-link layout-topbar-button">
+            <button @click="toggleMenu" class="p-link layout-topbar-button border-none shadow-none">
                 <i class="pi pi-user"></i>
             </button>
             <Menu ref="menu" :model="items" :popup="true" />

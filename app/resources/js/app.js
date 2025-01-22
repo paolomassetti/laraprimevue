@@ -16,6 +16,7 @@ import ConfirmPopup from 'primevue/confirmpopup';
 import Dialog from 'primevue/dialog';
 import DatePicker from 'primevue/datepicker';
 import axios from 'axios';
+import { definePreset } from '@primevue/themes';
 import Aura from '@primevue/themes/aura';
 
 import { router } from '@inertiajs/vue3';
@@ -54,7 +55,23 @@ createInertiaApp({
                 ripple: true,
                 locale: italianLocale,
                 theme: {
-                    preset: Aura,
+                    preset: definePreset(Aura, {
+                        semantic: {
+                            primary: {
+                            50: "{indigo.50}",
+                            100: "{indigo.100}",
+                            200: "{indigo.200}",
+                            300: "{indigo.300}",
+                            400: "{indigo.400}",
+                            500: "{indigo.500}",
+                            600: "{indigo.600}",
+                            700: "{indigo.700}",
+                            800: "{indigo.800}",
+                            900: "{indigo.900}",
+                            950: "{indigo.950}"
+                            }
+                        }
+                    })
                 }
             })
             .use(ToastService)
