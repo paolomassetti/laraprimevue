@@ -22,7 +22,7 @@ const sortField = ref('created_at')
 const sortOrder = ref(1)
 const loading = ref(false)
 const refreshKey = ref(0)
-const size = ref({ label: 'Normal', value: 'small' })
+const size = ref({ value: 'small'})
 
 //Filters
 const name = ref(null)
