@@ -9,13 +9,15 @@ import ConfirmationService from 'primevue/confirmationservice';
 import BadgeDirective from 'primevue/badgedirective';
 import Tooltip from 'primevue/tooltip';
 import InputText from 'primevue/inputtext';
-import Ripple from 'primevue/ripple';
 import StyleClass from 'primevue/styleclass';
 import ConfirmDialog from 'primevue/confirmdialog';
 import ConfirmPopup from 'primevue/confirmpopup';
 import Dialog from 'primevue/dialog';
-import Calendar from 'primevue/calendar';
+import DatePicker from 'primevue/datepicker';
 import axios from 'axios';
+import FloatLabel from 'primevue/floatlabel';
+import { definePreset } from '@primevue/themes';
+import Aura from '@primevue/themes/aura';
 
 import { router } from '@inertiajs/vue3';
 import { createApp, h } from 'vue';
@@ -39,7 +41,7 @@ const italianLocale = {
     dayNames: ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
     dayNamesShort: ["dom", "lun", "mar", "mer", "gio", "ven", "sab"],
     dayNamesMin: ["Do", "Lu", "Ma", "Me", "Gi", "Ve", "Sa"],
-    monthNames: ["gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"],
+    monthNames: ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"],
     monthNamesShort: ["gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ott", "nov", "dic"],
 }
 
@@ -49,21 +51,42 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         return createApp({ render: () => h(App, props) })
             .use(plugin)
-            .use(PrimeVue, { ripple: true, locale: italianLocale })
+            .use(PrimeVue, {
+                locale: italianLocale,
+                theme: {
+                    preset: definePreset(Aura, {
+                        semantic: {
+                            primary: {
+                            50: "{indigo.50}",
+                            100: "{indigo.100}",
+                            200: "{indigo.200}",
+                            300: "{indigo.300}",
+                            400: "{indigo.400}",
+                            500: "{indigo.500}",
+                            600: "{indigo.600}",
+                            700: "{indigo.700}",
+                            800: "{indigo.800}",
+                            900: "{indigo.900}",
+                            950: "{indigo.950}"
+                            }
+                        }
+                    })
+                }
+            })
             .use(ToastService)
             .use(DialogService)
             .use(ConfirmationService)
              .directive('tooltip', Tooltip)
              .directive('InputText', InputText)
              .directive('badge', BadgeDirective)
-             .directive('ripple', Ripple)
              .directive('styleclass', StyleClass)
              .component('Toast', Toast)
              .component('ConfirmDialog', ConfirmDialog)
              .component('ConfirmPopup', ConfirmPopup)
              .component('Dialog', Dialog)
              .component('router-link', Link)
-             .component('Calendar', Calendar)
+             .component('DatePicker', DatePicker)
+             .component('FloatLabel', FloatLabel)
             .use(ZiggyVue)
             .mount(el);
     },

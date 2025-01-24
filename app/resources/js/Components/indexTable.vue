@@ -39,6 +39,9 @@ const props = defineProps({
     refreshKey: {
         type: Number,
         default: 0
+    },
+    size: {
+        type: String
     }
 });
 
@@ -67,6 +70,7 @@ const onSort = (event) => {
         :loading="loading"
         :sortField="sortField"
         :sortOrder="sortOrder"
+        :size="size"
         @page="onPage"
         @sort="onSort"
         stripedRows

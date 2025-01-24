@@ -1,5 +1,7 @@
 .p-button { box-shadow: none; }
 
+.filter-button .p-togglebutton-label { display: none; }
+
 .delete-button {
     line-height: 1;
     background: transparent;
@@ -7,3 +9,4 @@
     padding: 0;
     margin: 0;
 }
+

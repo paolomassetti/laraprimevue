@@ -22,6 +22,7 @@ const sortField = ref('created_at')
 const sortOrder = ref(1)
 const loading = ref(false)
 const refreshKey = ref(0)
+const size = ref({ value: 'small'})
 
 //Filters
 const name = ref(null)
@@ -132,7 +133,7 @@ const refreshData = () => {
     refreshKey.value++
     name.value = ''
     email.value = ''
-    created_at.value = ''
+    created_at.value = null
     loadUsers()
 };
 
@@ -145,7 +146,6 @@ const formatDateForServer = (date) => {
     if (!date) return null
     let localDate = new Date(date)
     localDate.setMinutes(localDate.getMinutes() - localDate.getTimezoneOffset())
-    console.log(localDate.toISOString().split("T")[0])
     return localDate.toISOString().split("T")[0];
 };
 
@@ -173,22 +173,28 @@ const createUser = () => {
             <div class="col-12">
                 <div class="card flex flex-1 align-items-end">
                     <div class="col-3 p-0 mr-4">
-                        <div class="flex flex-column gap-2">
-                            <label for="name">Nome</label>
-                            <InputText id="name" v-model="name" />
-                        </div>
+                        <FloatLabel>
+                            <div class="flex flex-column gap-2">
+                                <label for="name">Nome</label>
+                                <InputText id="name" v-model="name" />
+                            </div>
+                        </FloatLabel>
                     </div>
                     <div class="col-3 p-0 mr-4">
-                        <div class="flex flex-column gap-2">
-                            <label for="email">Email</label>
-                            <InputText id="email" v-model="email" datatype="email" />
-                        </div>
+                        <FloatLabel>
+                            <div class="flex flex-column gap-2">
+                                <label for="email">Email</label>
+                                <InputText id="email" v-model="email" datatype="email" />
+                            </div>
+                        </FloatLabel>
                     </div>
                     <div class="col-3 p-0 mr-4">
-                        <div class="flex flex-column gap-2">
-                            <label for="created_at">Data creazione</label>
-                            <Calendar v-model="created_at" id="created_at" dateFormat="dd/mm/yy" />
-                        </div>
+                        <FloatLabel>
+                            <div class="flex flex-column gap-2">
+                                <label for="created_at">Data creazione</label>
+                                <DatePicker v-model="created_at" id="created_at" class="p-0 shadow-none" dateFormat="dd/mm/yy" />
+                            </div>
+                        </FloatLabel>
                     </div>
                     <div class="col-1 p-0 m-0">
                         <div class="flex flex-column align-items-start">
@@ -212,6 +218,7 @@ const createUser = () => {
                     :loading="loading"
                     :sort-field="sortField"
                     :sort-order="sortOrder"
+                    :size="size.value"
                     stripedRows
                     rowHover
                     responsiveLayout="scroll"
@@ -229,11 +236,9 @@ const createUser = () => {
                             <div class="flex flex-wrap align-items-center justify-content-right gap-2">
                                 <ToggleButton
                                     v-model="filtersVisibily"
-                                    class="toggle-filter shadow-none"
+                                    class="shadow-none filter-button"
                                     offIcon="pi pi-filter"
                                     onIcon="pi pi-filter-slash"
-                                    onLabel=""
-                                    offLabel=""
                                     active
                                 />
                                 <Button
@@ -255,7 +260,7 @@ const createUser = () => {
                         <Button
                             icon="pi pi-pencil"
                             class="action-button"
-                            severity="warning"
+                            severity="warn"
                             v-tooltip.left="'Modifica utente'"
                             text rounded
                             @click="() => router.visit(data.url_edit)"
@@ -279,35 +284,6 @@ const createUser = () => {
 </template>
 
 <style scoped lang="scss">
-    .action-button {
-        width: 2rem;
-        height: fit-content;
-        padding: 0;
-        &:hover, &:focus, &:active {
-            background-color: transparent;
-            box-shadow: none;
-        }
-    }
-
-    .add-user {
-        height: 2.5rem;
-        width: 2.5rem;
-    }
-
-    .toggle-filter {
-        background-color: #4F46E5;
-        border-radius: 50%;
-        border: none;
-        width: 2.5rem;
-        height: 2.5rem;
-    }
-
-    .p-togglebutton.p-button .p-button-icon-left {
-        color: white !important;
-    }
-
-    .pi-filter:before { color: white !important; }
-
     .slide-fade-enter-active, .slide-fade-leave-active {
         transition: all 0.3s ease;
     }
