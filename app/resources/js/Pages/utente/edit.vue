@@ -28,7 +28,7 @@ const updateUserData = () => {
     <title>{{ pageTitle }}</title>
 </Head>
 <app-layout>
-    <div class="grid">
+    <form @submit.prevent="updateUserData" class="grid">
         <div class="col-12">
             <div class="card flex flex-1 flex-wrap align-items-end">
                 <div class="col-3 p-0 mr-4">
@@ -48,12 +48,12 @@ const updateUserData = () => {
                     </FloatLabel>
                 </div>
                 <div class="col-12 pl-0 pb-0 flex gap-2">
-                    <Button label="Salva" severity="success" class="m-0" raised @click="updateUserData" />
+                    <Button label="Salva" type="submit" severity="success" class="m-0" raised />
                     <Link class="p-button m-0  p-button-raised" :href="backUrl">Indietro</Link>
                 </div>
             </div>
         </div>
-    </div>
+    </form>
 </app-layout>
 </template>
 

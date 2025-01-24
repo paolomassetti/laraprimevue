@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, reactive } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3'
 import { useToast } from 'primevue/usetoast';
@@ -25,10 +25,28 @@ const refreshKey = ref(0)
 const size = ref({ value: 'small'})
 
 //Filters
-const name = ref(null)
-const email = ref(null)
-const created_at = ref(null)
+const name = ref(null);
+const email = ref(null);
+const created_at = ref(null);
 const filtersVisibily = ref(false)
+
+const isFilterActive = reactive({
+    name: false,
+    email: false,
+    created_at: false
+})
+
+watch(name, (newValue, oldValue) => {
+    isFilterActive.name = !!newValue
+})
+
+watch(email, (newValue, oldValue) => {
+    isFilterActive.email = !!newValue;
+})
+
+watch(created_at, (newValue, oldValue) => {
+    isFilterActive.created_at = !!newValue;
+})
 
 const props = defineProps({
   pageTitle: String,
@@ -150,7 +168,7 @@ const formatDateForServer = (date) => {
 };
 
 const createUser = () => {
-    router.visit('/utente/new');
+    router.visit('/utente/new')
 };
 
 </script>
@@ -171,12 +189,12 @@ const createUser = () => {
     <transition name="slide-fade">
         <div v-show="filtersVisibily" class="grid">
             <div class="col-12">
-                <div class="card flex flex-1 align-items-end">
+                <div class="card flex flex-1 align-items-end p-5">
                     <div class="col-3 p-0 mr-4">
                         <FloatLabel>
                             <div class="flex flex-column gap-2">
                                 <label for="name">Nome</label>
-                                <InputText id="name" v-model="name" />
+                                <InputText id="name" v-model="name" :class="{ 'border border-indigo-500': isFilterActive.name }" />
                             </div>
                         </FloatLabel>
                     </div>
@@ -295,4 +313,8 @@ const createUser = () => {
         opacity: 1;
         transform: translateY(0);
     }
+
+    // .active-filter {
+    //     border: 1px solid indigo;
+    // }
 </style>
