@@ -1,4 +1,5 @@
 <script setup>
+import { ref } from 'vue'
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
@@ -33,8 +34,7 @@ const props = defineProps({
         default: 1
     },
     pageTitle: {
-        type: String,
-        default: ''
+        type: String
     },
     refreshKey: {
         type: Number,
@@ -48,7 +48,7 @@ const props = defineProps({
 const emit = defineEmits([
     'updatePage',
     'updateSort',
-    'refreshData',
+    'refreshData'
 ]);
 
 const onPage = (event) => {
@@ -58,6 +58,7 @@ const onPage = (event) => {
 const onSort = (event) => {
     emit('updateSort', { sortField: event.sortField, sortOrder: event.sortOrder });
 };
+
 </script>
 
 <template>
@@ -83,7 +84,12 @@ const onSort = (event) => {
         </template>
 
         <template #header>
-            <slot name="header"></slot>
+            <div class="flex flex-wrap align-items-center justify-content-between gap-2 pt-0 pb-1">
+                <span class="text-xl text-900 font-bold">{{ pageTitle }}</span>
+                <div class="flex flex-wrap align-items-center justify-content-right gap-2">
+                    <slot name="header"></slot>
+                </div>
+            </div>
         </template>
 
         <template #paginatorstart>

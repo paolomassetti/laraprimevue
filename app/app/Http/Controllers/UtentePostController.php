@@ -102,4 +102,10 @@ class UtentePostController extends Controller
         $user->delete();
         return redirect()->route('utenti.post')->with('success', 'utente eliminato con successo');
     }
+
+    public function export()
+    {
+        
+        return;
+    }
 }

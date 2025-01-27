@@ -1,17 +1,17 @@
 <script setup>
-import { ref, onMounted, watch, reactive } from 'vue';
-import { Head } from '@inertiajs/vue3';
+import { ref, onMounted, watch, reactive } from 'vue'
+import { Head } from '@inertiajs/vue3'
 import { usePage } from '@inertiajs/vue3'
-import { useToast } from 'primevue/usetoast';
-import { router } from '@inertiajs/vue3';
-import { useConfirm } from "primevue/useconfirm";
-import axios from 'axios';
-import ToggleButton from 'primevue/togglebutton';
-import Button from 'primevue/button';
-import AppLayout from "@/primevue/layout/AppLayout.vue";
-import InputText from 'primevue/inputtext';
-import IndexTable from '@/Components/indexTable.vue';
-import Confirmation from '@/Components/Confirmation.vue';
+import { useToast } from 'primevue/usetoast'
+import { router } from '@inertiajs/vue3'
+import { useConfirm } from "primevue/useconfirm"
+import axios from 'axios'
+import ToggleButton from 'primevue/togglebutton'
+import Button from 'primevue/button'
+import AppLayout from "@/primevue/layout/AppLayout.vue"
+import InputText from 'primevue/inputtext'
+import IndexTable from '@/Components/indexTable.vue'
+import Confirmation from '@/Components/Confirmation.vue'
 
 //DataTables
 const users = ref([])
@@ -25,9 +25,9 @@ const refreshKey = ref(0)
 const size = ref({ value: 'small'})
 
 //Filters
-const name = ref(null);
-const email = ref(null);
-const created_at = ref(null);
+const name = ref(null)
+const email = ref(null)
+const created_at = ref(null)
 const filtersVisibily = ref(false)
 
 const isFilterActive = reactive({
@@ -50,7 +50,7 @@ watch(created_at, (newValue, oldValue) => {
 
 const props = defineProps({
   pageTitle: String,
-});
+})
 
 const loadUsers = async () => {
     loading.value = true
@@ -65,11 +65,11 @@ const loadUsers = async () => {
         name: name.value,
         email: email.value,
         created_at: formattedDate
-    });
+    })
     users.value = response.data.data
     totalRecords.value = response.data.recordsTotal
     loading.value = false
-};
+}
 
 //Toast
 let successMsg = ref('')
@@ -88,21 +88,21 @@ const requireConfirmation = (url) => {
         group: 'headless',
         header: 'Vuoi procedere?',
         message: 'L\'utente sarà eliminato',
-    });
+    })
 
     document.activeElement.blur();
-};
+}
 
 //Columns
 const userColumns = [
     { field: 'name', header: 'Nome', sortable: true },
     { field: 'email', header: 'Email', sortable: true },
     { field: 'created_at', header: 'Data Creazione', sortable: true }
-];
+]
 
 onMounted(() => {
-    successMsg.value = page.props.flash.success || '';
-    errorMsg.value = page.props.flash.error || '';
+    successMsg.value = page.props.flash.success || ''
+    errorMsg.value = page.props.flash.error || ''
 
     watch(() => page.props.flash.success, (newVal) => {
         if (newVal && !toastShown.value) {
@@ -111,7 +111,7 @@ onMounted(() => {
                 summary: 'Congratulazioni!',
                 detail: newVal,
                 life: 3000
-            });
+            })
             toastShown.value = true;
         }
     }, { immediate: true });
@@ -127,6 +127,7 @@ onMounted(() => {
             toastShown.value = true;
         }
     }, { immediate: true });
+
     loadUsers()
 });
 
@@ -137,14 +138,14 @@ watch(() => page.props.flash, () => {
 const handlePageChange = ({ page, rows }) => {
     rowsPerPage.value = rows
     currentPage.value = page
-    loadUsers();
-};
+    loadUsers()
+}
 
 const handleSortChange = ({ sortField: field, sortOrder: order }) => {
     sortField.value = field
     sortOrder.value = order
-    loadUsers();
-};
+    loadUsers()
+}
 
 const refreshData = () => {
     sortField.value = 'created_at'
@@ -155,23 +156,43 @@ const refreshData = () => {
     email.value = ''
     created_at.value = null
     loadUsers()
-};
+}
 
 const applyFilters = () => {
     currentPage.value = 1
     loadUsers()
-};
+}
 
 const formatDateForServer = (date) => {
     if (!date) return null
     let localDate = new Date(date)
     localDate.setMinutes(localDate.getMinutes() - localDate.getTimezoneOffset())
-    return localDate.toISOString().split("T")[0];
-};
+    return localDate.toISOString().split("T")[0]
+}
 
 const createUser = () => {
     router.visit('/utente/new')
-};
+}
+
+const exportData = async () => {
+    try {
+        const formattedDate = formatDateForServer(created_at.value)
+        const response = await axios.post('/utenti/export', {
+            name: name.value,
+            email: email.value,
+            created_at: formattedDate
+        }, {
+            responseType: 'blob'
+        })
+    } catch {
+        toast.add({
+            severity: 'success',
+            summary: 'Errore!',
+            detail: 'Errore durante l\'esportazione',
+            life: 3000
+        })
+    }
+}
 
 </script>
 <template>
@@ -239,6 +260,7 @@ const createUser = () => {
                     :sort-field="sortField"
                     :sort-order="sortOrder"
                     :size="size.value"
+                    :page-title="pageTitle"
                     stripedRows
                     rowHover
                     responsiveLayout="scroll"
@@ -251,27 +273,30 @@ const createUser = () => {
                     </template>
 
                     <template #header>
-                        <div class="flex flex-wrap align-items-center justify-content-between gap-2">
-                            <span class="text-xl text-900 font-bold">{{ props.pageTitle }}</span>
-                            <div class="flex flex-wrap align-items-center justify-content-right gap-2">
-                                <ToggleButton
-                                    v-model="filtersVisibily"
-                                    class="shadow-none filter-button"
-                                    offIcon="pi pi-filter"
-                                    onIcon="pi pi-filter-slash"
-                                    active
-                                />
-                                <Button
-                                    icon="pi pi-plus"
-                                    class="add-user"
-                                    severity="success"
-                                    rounded
-                                    raised
-                                    v-tooltip.left="'Aggiungi utente'"
-                                    @click="createUser"
-                                />
-                            </div>
-                        </div>
+                        <ToggleButton
+                            v-model="filtersVisibily"
+                            class="shadow-none filter-button"
+                            offIcon="pi pi-filter"
+                            onIcon="pi pi-filter-slash"
+                            active
+                        />
+                        <Button
+                            icon="pi pi-plus"
+                            class="add-user"
+                            severity="success"
+                            rounded
+                            raised
+                            v-tooltip.left="'Aggiungi utente'"
+                            @click="createUser"
+                        />
+                        <Button
+                            icon="pi pi-external-link"
+                            class="add-user"
+                            rounded
+                            raised
+                            v-tooltip.left="'Esporta'"
+                            @click="exportData"
+                        />
                     </template>
 
                     <template
@@ -303,16 +328,4 @@ const createUser = () => {
 </app-layout>
 </template>
 
-<style scoped lang="scss">
-    .slide-fade-enter-active, .slide-fade-leave-active {
-        transition: all 0.3s ease;
-    }
-    .slide-fade-enter-from, .slide-fade-leave-to {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    .slide-fade-enter-to, .slide-fade-leave-from {
-        opacity: 1;
-        transform: translateY(0);
-    }
-</style>
+<style scoped lang="scss"></style>
