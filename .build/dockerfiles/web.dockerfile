@@ -10,6 +10,8 @@ RUN apt-get update && apt-get install -y \
     iputils-ping \
     && apt-get clean
 
+RUN docker-php-ext-install gd zip
+
 ENV INFORMIXDIR=/opt/ibm/informix
 ENV INFORMIXSERVER=informix
 ENV INFORMIXSQLHOSTS=/opt/ibm/informix/etc/sqlhosts
