@@ -1,7 +1,7 @@
 <script setup>
-import { Link } from '@inertiajs/vue3';
 import ConfirmDialog from 'primevue/confirmdialog';
 import Button from 'primevue/button';
+import { useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
     group: {
@@ -20,6 +20,14 @@ const emit = defineEmits([
     'refreshData',
 ])
 
+const form = useForm({});
+const onDelete = () => {
+    form.delete(props.confirmationUrl, {
+        onSuccess: () => {
+            emit('refreshData');
+        }
+    })
+}
 
 </script>
 
@@ -33,30 +41,19 @@ const emit = defineEmits([
             <span class="font-bold text-2xl block mb-2 mt-4">{{ message.header }}</span>
             <p class="mb-0">{{ message.message }}</p>
             <div class="flex align-items-center gap-2 mt-4">
-                <Link
-                    :href="confirmationUrl"
-                    as="button"
-                    class="delete-button"
-                    method="delete"
-                    @success="() => {
-                        acceptCallback()
-                        emit('refreshData')
-                    }
-                ">
-                    <Button
-                        label="Conferma"
-                        severity="success"
-                        rounded
-                    />
-                </Link>
+                <Button
+                    label="Conferma"
+                    severity="success"
+                    rounded
+                    @click="onDelete(), acceptCallback()"
+                />
                 <Button
                     class="shadow-none"
                     label="Annulla"
                     rounded
                     outlined
                     @click="rejectCallback"
-                >
-                </Button>
+                />
             </div>
         </div>
     </template>

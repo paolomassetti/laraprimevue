@@ -83,12 +83,14 @@ const confirm = useConfirm()
 let currentUrlDelete = ref('')
 
 const requireConfirmation = (url) => {
-    currentUrlDelete = url
+    currentUrlDelete.value = url
     confirm.require({
         group: 'headless',
         header: 'Vuoi procedere?',
         message: 'L\'utente sarà eliminato',
     });
+
+    document.activeElement.blur();
 };
 
 //Columns
@@ -112,7 +114,7 @@ onMounted(() => {
             });
             toastShown.value = true;
         }
-    });
+    }, { immediate: true });
 
     watch(() => page.props.flash.error, (newVal) => {
         if (newVal && !toastShown.value) {
@@ -124,7 +126,7 @@ onMounted(() => {
             });
             toastShown.value = true;
         }
-    });
+    }, { immediate: true });
     loadUsers()
 });
 
@@ -177,7 +179,7 @@ const createUser = () => {
     <title>{{ pageTitle }}</title>
 </Head>
 
-<Toast position="center"/>
+<Toast />
 
 <Confirmation
     group="headless"
@@ -313,8 +315,4 @@ const createUser = () => {
         opacity: 1;
         transform: translateY(0);
     }
-
-    // .active-filter {
-    //     border: 1px solid indigo;
-    // }
 </style>
