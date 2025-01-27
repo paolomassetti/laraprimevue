@@ -7,10 +7,16 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     gzip \
+    libzip-dev \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    zlib1g-dev \
     iputils-ping \
     && apt-get clean
 
-RUN docker-php-ext-install gd zip
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd zip
 
 ENV INFORMIXDIR=/opt/ibm/informix
 ENV INFORMIXSERVER=informix

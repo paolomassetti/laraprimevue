@@ -94,7 +94,7 @@ const onSort = (event) => {
 
         <template #paginatorstart>
             <Button
-                v-tooltip.bottom="'Ricarica tabella'"
+                v-tooltip.bottom="'Reset'"
                 type="button"
                 icon="pi pi-refresh"
                 text

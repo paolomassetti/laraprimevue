@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UtenteRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\UserQueryService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class UtentePostController extends Controller
 {
@@ -19,27 +22,9 @@ class UtentePostController extends Controller
         ]);
     }
 
-    public function search(Request $request)
+    public function search(Request $request, UserQueryService $UserQueryService)
     {
-        $query = User::query();
-
-        if ($request->filled('name')) {
-            $query->where('name', 'like', '%' . $request->input('name') . '%');
-        }
-
-        if ($request->filled('email')) {
-            $query->where('email', 'like', '%' . $request->input('email') . '%');
-        }
-
-        if ($request->filled('created_at')) {
-
-            $date = Carbon::parse($request->input('created_at'), 'UTC')->format('Y-m-d');
-
-            $query->whereBetween('created_at', [
-                $date . ' 00:00:00',
-                $date . ' 23:59:59'
-            ]);
-        }
+        $query = $UserQueryService->buildQuery($request);
 
         $totalData = $query->count();
 
@@ -103,9 +88,38 @@ class UtentePostController extends Controller
         return redirect()->route('utenti.post')->with('success', 'utente eliminato con successo');
     }
 
-    public function export()
+    public function export(Request $request, UserQueryService $UserQueryService)
     {
-        
-        return;
+
+        $query = $UserQueryService->buildQuery($request);
+
+        $users = $query->get();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $sheet->setCellValue('A1', 'ID');
+        $sheet->setCellValue('B1', 'Nome');
+        $sheet->setCellValue('C1', 'Email');
+        $sheet->setCellValue('D1', 'Data Creazione');
+
+        $row = 2;
+        foreach ($users as $user) {
+            $sheet->setCellValue('A' . $row, $user->id);
+            $sheet->setCellValue('B' . $row, $user->name);
+            $sheet->setCellValue('C' . $row, $user->email);
+            $sheet->setCellValue('D' . $row, $user->created_at->format('d/m/Y'));
+            $row++;
+        }
+
+        $writer = new Xlsx($spreadsheet);
+        $filename = 'utenti_export.xlsx';
+
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
+
     }
 }
