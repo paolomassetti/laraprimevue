@@ -225,24 +225,54 @@ const exportData = async () => {
                     <div class="col-3 p-0 mr-4">
                         <FloatLabel>
                             <div class="flex flex-column gap-2">
-                                <label for="name">Nome</label>
-                                <InputText id="name" v-model="name" :class="{ 'border border-indigo-500': isFilterActive.name }" />
+                                <label
+                                    for="name"
+                                    :class="{ 'text-indigo-500': isFilterActive.name }"
+                                >
+                                    Nome
+                                </label>
+                                <InputText
+                                    id="name"
+                                    v-model="name"
+                                    :class="{ 'border border-indigo-500': isFilterActive.name }"
+                                />
                             </div>
                         </FloatLabel>
                     </div>
                     <div class="col-3 p-0 mr-4">
                         <FloatLabel>
                             <div class="flex flex-column gap-2">
-                                <label for="email">Email</label>
-                                <InputText id="email" v-model="email" datatype="email" />
+                                <label
+                                    for="email"
+                                    :class="{ 'text-indigo-500': isFilterActive.email }"
+                                >
+                                    Email
+                                </label>
+                                <InputText
+                                    id="email"
+                                    v-model="email"
+                                    datatype="email"
+                                    :class="{ 'border border-indigo-500': isFilterActive.email }"
+                                />
                             </div>
                         </FloatLabel>
                     </div>
                     <div class="col-3 p-0 mr-4">
                         <FloatLabel>
                             <div class="flex flex-column gap-2">
-                                <label for="created_at">Data creazione</label>
-                                <DatePicker v-model="created_at" id="created_at" class="p-0 shadow-none" dateFormat="dd/mm/yy" />
+                                <label
+                                    for="created_at"
+                                    :class="{ 'text-indigo-500': isFilterActive.created_at }"
+                                >
+                                    Data creazione
+                                </label>
+                                <DatePicker
+                                    v-model="created_at"
+                                    id="created_at"
+                                    class="p-0 shadow-none"
+                                    dateFormat="dd/mm/yy"
+                                    :class="{ 'border border-indigo-500': isFilterActive.created_at }"
+                                />
                             </div>
                         </FloatLabel>
                     </div>
