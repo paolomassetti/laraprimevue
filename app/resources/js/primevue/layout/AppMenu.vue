@@ -8,7 +8,7 @@ const model = ref([
             { label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/' },
             { label: 'Utenti', icon: 'pi pi-fw pi-users', to: '/utenti' },
             { label: 'Utenti-post', icon: 'pi pi-fw pi-users', to: '/utenti-post' },
-            { label: 'Chart', icon: 'pi pi-fw pi-chart-bar', to: '/chart' },
+            { label: 'Chart', icon: 'pi pi-fw pi-chart-bar', to: '/chart' }
         ]
     }
 ]);

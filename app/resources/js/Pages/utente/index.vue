@@ -321,7 +321,6 @@ const exportData = async () => {
                         />
                         <Button
                             icon="pi pi-plus"
-                            class="add-user"
                             severity="success"
                             rounded
                             raised
@@ -330,7 +329,6 @@ const exportData = async () => {
                         />
                         <Button
                             icon="pi pi-external-link"
-                            class="add-user"
                             rounded
                             raised
                             v-tooltip.left="'Esporta'"
