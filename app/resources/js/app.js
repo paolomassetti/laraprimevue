@@ -16,9 +16,9 @@ import Dialog from 'primevue/dialog';
 import DatePicker from 'primevue/datepicker';
 import axios from 'axios';
 import FloatLabel from 'primevue/floatlabel';
-import { definePreset } from '@primevue/themes';
-import Aura from '@primevue/themes/aura';
+import Aura from '@primeuix/themes/aura';
 
+import { definePreset } from '@primeuix/themes';
 import { router } from '@inertiajs/vue3';
 import { createApp, h } from 'vue';
 import { createInertiaApp, Link } from '@inertiajs/vue3';
